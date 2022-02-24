@@ -31,6 +31,10 @@ impl Color {
         (self.r, self.g, self.b)
     }
 
+    fn value(&self) -> u32 {
+        (self.r as u32) << 24 | (self.g as u32) << 16 | (self.b as u32) << 8
+    }
+
     fn from_tuple(tuple: ColorTuple) -> Color {
         Color {
             r: tuple.0,
