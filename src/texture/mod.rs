@@ -1,6 +1,6 @@
 mod uniform;
 
-trait Lighting {
+pub trait Lighting {
     fn coefficients(&self) -> (f64, f64, f64);
 }
 
