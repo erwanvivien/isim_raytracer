@@ -1,9 +1,9 @@
-mod sphere;
+pub mod sphere;
 
 use crate::point::Point;
 use crate::vector::Vector;
 
-trait Intersect {
+pub trait Intersect {
     fn is_intersect(&self, p: Point, v: Vector) -> bool;
 }
 trait Normal {

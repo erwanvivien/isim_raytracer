@@ -5,15 +5,9 @@ use crate::texture::Lighting;
 use crate::vector::Vector;
 
 pub struct Sphere {
-    p: Point,
-    r: f64,
-    texture: UniformTexture,
-}
-
-impl Sphere {
-    fn equation(&self, a: f64, b: f64, c: f64) -> f64 {
-        (b * b) - 4f64 * a * c
-    }
+    pub p: Point,
+    pub r: f64,
+    pub texture: UniformTexture,
 }
 
 impl Intersect for Sphere {
@@ -21,25 +15,29 @@ impl Intersect for Sphere {
         // a = (x2 - x1)2 + (y2 - y1)2 + (z2 - z1)2
         // b = - 2[(x2 - x1)(xc - x1) + (y2 - y1)(yc - y1) + (z2 - z1)(zc - z1)]
         // c = (xc - x1)2 + (yc - y1)2 + (zc - z1)2 - r2
-        let (x1, x2, xc) = (p.x, v.x, self.p.x);
-        let (y1, y2, yc) = (p.y, v.y, self.p.y);
-        let (z1, z2, zc) = (p.z, v.z, self.p.z);
+        let (x1, x2, xc) = (p.x, v.x + p.x, self.p.x);
+        let (y1, y2, yc) = (p.y, v.y + p.y, self.p.y);
+        let (z1, z2, zc) = (p.z, v.z + p.z, self.p.z);
 
-        dbg!((x1, x2, xc));
-        dbg!((y1, y2, yc));
-        dbg!((z1, z2, zc));
+        // let cp = (p - self.p).to_vec();
+        //
+        // let a = v.normalize();
+        // let a = a * a;
+        //
+        // let b = (v.x * cp);
+        // let b = b * -2f64;
+        //
+        // let c = (cp.x.powf(2f64) + cp.y.powf(2f64) + cp.z.powf(2f64)) - self.r.powf(2f64);
 
         let a = (x2 - x1).powf(2f64) + (y2 - y1).powf(2f64) + (z2 - z1).powf(2f64);
-        let b = v * (p - self.p).to_vec();
-        let b = b * 2f64;
-
+        let b = (x2 - x1) * (xc - x1) + (y2 - y1) * (yc - y1) + (z2 - z1) * (zc - z1);
+        let b = -2f64 * b;
         let c =
             (xc - x1).powf(2f64) + (yc - y1).powf(2f64) + (zc - z1).powf(2f64) - self.r.powf(2f64);
 
-        dbg!((a, b, c));
-        dbg!(self.equation(a, b, c));
+        println!("{:?} = {}", (a, b, c), (b * b) - 4f64 * a * c);
 
-        self.equation(a, b, c) >= 0f64
+        (b * b) - 4f64 * a * c >= 0f64
     }
 }
 
@@ -69,7 +67,7 @@ mod tests {
     use crate::vector::Vector;
 
     #[test]
-    fn intersert() {
+    fn intersect0() {
         let sphere = Sphere {
             p: Point::new(4f64, 5f64, 6f64),
             r: 1f64,
