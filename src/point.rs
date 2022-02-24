@@ -1,3 +1,4 @@
+use crate::vector::Vector;
 use std::ops::{Add, Mul, Neg, Sub};
 
 #[derive(Debug, PartialOrd, PartialEq, Copy, Clone)]
@@ -10,6 +11,14 @@ pub struct Point {
 impl Point {
     pub fn new(x: f64, y: f64, z: f64) -> Point {
         Point { x, y, z }
+    }
+
+    pub fn to_vec(&self) -> Vector {
+        Vector {
+            x: self.x,
+            y: self.y,
+            z: self.z,
+        }
     }
 }
 

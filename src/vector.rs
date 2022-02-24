@@ -1,3 +1,4 @@
+use crate::point::Point;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug, PartialOrd, PartialEq, Copy, Clone)]
@@ -19,6 +20,14 @@ impl Vector {
     pub fn normalize(&self) -> Vector {
         let mag = self.mag();
         *self / mag
+    }
+
+    pub fn to_point(&self) -> Point {
+        Point {
+            x: self.x,
+            y: self.y,
+            z: self.z,
+        }
     }
 }
 
