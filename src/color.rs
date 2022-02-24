@@ -61,4 +61,14 @@ mod tests {
     fn blue() {
         assert_eq!(Color::BLUE.values(), (0, 0, 255))
     }
+
+    #[test]
+    fn from_tuple() {
+        assert_eq!(Color::WHITE, Color::from_tuple((255, 255, 255)))
+    }
+
+    #[test]
+    fn from_values() {
+        assert_eq!(Color::RED, Color::from_values(255, 0, 0))
+    }
 }
