@@ -1,7 +1,7 @@
 use std::ops::{Add, Mul, Neg, Sub};
 
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq, Copy, Clone)]
-struct Vector {
+pub struct Vector {
     x: i64,
     y: i64,
     z: i64,
