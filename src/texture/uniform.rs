@@ -1,3 +1,4 @@
+use crate::point::Point;
 use crate::texture::Lighting;
 
 pub struct UniformTexture {
@@ -7,7 +8,7 @@ pub struct UniformTexture {
 }
 
 impl Lighting for UniformTexture {
-    fn coefficients(&self) -> (f64, f64, f64) {
+    fn coefficients(&self, _point: Point) -> (f64, f64, f64) {
         (self.kd, self.ks, self.ka)
     }
 }

@@ -1,11 +1,13 @@
 use crate::object::{Intersect, Normal};
 use crate::point::Point;
+use crate::texture::uniform::UniformTexture;
 use crate::texture::Lighting;
 use crate::vector::Vector;
 
 pub struct Sphere {
     p: Point,
     r: f64,
+    texture: UniformTexture,
 }
 
 impl Sphere {
@@ -46,7 +48,7 @@ impl Normal for Sphere {
 }
 
 impl Lighting for Sphere {
-    fn coefficients(&self) -> (f64, f64, f64) {
-        unimplemented!()
+    fn coefficients(&self, point: Point) -> (f64, f64, f64) {
+        self.texture.coefficients(point)
     }
 }
