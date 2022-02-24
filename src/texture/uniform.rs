@@ -2,9 +2,9 @@ use crate::point::Point;
 use crate::texture::Lighting;
 
 pub struct UniformTexture {
-    pub kd: f64,
-    pub ks: f64,
-    pub ka: f64,
+    pub kd: f64, // diffusion
+    pub ks: f64, // specularite
+    pub ka: f64, // ambiance
 }
 
 impl Lighting for UniformTexture {
