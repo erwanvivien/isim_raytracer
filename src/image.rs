@@ -1,7 +1,9 @@
+use crate::color::Color;
+
 pub struct Image {
     height: usize,
     width: usize,
-    pixels: Vec<u32>,
+    pixels: Vec<Color>,
 }
 
 impl Image {
@@ -20,6 +22,6 @@ mod tests {
     #[test]
     fn new() {
         let image = Image::new(16, 16);
-        assert_eq!(image.pixels.capacity(), 16 * 16)
+        assert_eq!(image.pixels.capacity(), image.height * image.width)
     }
 }
