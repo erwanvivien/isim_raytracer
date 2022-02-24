@@ -34,8 +34,14 @@ impl Intersect for Sphere {
 }
 
 impl Normal for Sphere {
-    fn normal(&self) -> Vector {
-        unimplemented!()
+    fn normal(&self, p: Point) -> Vector {
+        let tmp = p - self.p;
+        Vector {
+            x: tmp.x,
+            y: tmp.y,
+            z: tmp.z,
+        }
+        .normalize()
     }
 }
 
