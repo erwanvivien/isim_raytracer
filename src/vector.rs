@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Neg, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug, PartialOrd, PartialEq, Copy, Clone)]
 pub struct Vector {
@@ -10,6 +10,15 @@ pub struct Vector {
 impl Vector {
     pub fn new(x: f64, y: f64, z: f64) -> Vector {
         Vector { x, y, z }
+    }
+
+    pub fn mag(&self) -> f64 {
+        (self.x.powf(2f64) + self.y.powf(2f64) + self.z.powf(2f64)).sqrt()
+    }
+
+    pub fn normalize(&self) -> Vector {
+        let mag = self.mag();
+        *self / mag
     }
 }
 
@@ -78,6 +87,17 @@ impl Mul<f64> for Vector {
     }
 }
 
+impl Div<f64> for Vector {
+    type Output = Vector;
+    fn div(self, rhs: f64) -> Self::Output {
+        Vector {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
 mod tests {
     use crate::vector::Vector;
 
@@ -133,5 +153,13 @@ mod tests {
         v1 = v1 * 5f64;
 
         assert_eq!(v1, Vector::new(10f64, 20f64, 0f64))
+    }
+
+    #[test]
+    fn div_num() {
+        let mut v1 = Vector::new(10f64, 20f64, 0f64);
+        v1 = v1 / 5f64;
+
+        assert_eq!(v1, Vector::new(2f64, 4f64, 0f64))
     }
 }
