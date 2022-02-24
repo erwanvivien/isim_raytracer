@@ -83,6 +83,126 @@ mod tests {
         let is_intersect = sphere.is_intersect(point, ray);
 
         dbg!(&is_intersect);
-        assert!(is_intersect)
+        assert_eq!(true, is_intersect)
+    }
+
+    #[test]
+    fn intersect1() {
+        let sphere = Sphere {
+            p: Point::new(4f64, 5f64, 6f64),
+            r: 1f64,
+            texture: UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 1f64,
+            },
+        };
+
+        let point = Point::new(0f64, 1f64, 1f64);
+        let ray = Vector::new(1f64, 1f64, 1f64);
+        let is_intersect = sphere.is_intersect(point, ray);
+
+        dbg!(&is_intersect);
+        assert_eq!(true, is_intersect)
+    }
+
+    #[test]
+    fn intersect2() {
+        let sphere = Sphere {
+            p: Point::new(4f64, 5f64, 6f64),
+            r: 1f64,
+            texture: UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 1f64,
+            },
+        };
+
+        let point = Point::new(0f64, 1f64, 0f64);
+        let ray = Vector::new(1f64, 1f64, 1.5f64);
+        let is_intersect = sphere.is_intersect(point, ray);
+
+        dbg!(&is_intersect);
+        assert_eq!(true, is_intersect)
+    }
+
+    #[test]
+    fn no_intersect0() {
+        let sphere = Sphere {
+            p: Point::new(4f64, 5f64, 6f64),
+            r: 1f64,
+            texture: UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 1f64,
+            },
+        };
+
+        let point = Point::new(0f64, 1f64, -0.5f64);
+        let ray = Vector::new(1f64, 1f64, 1f64);
+        let is_intersect = sphere.is_intersect(point, ray);
+
+        dbg!(&is_intersect);
+        assert_eq!(false, is_intersect)
+    }
+
+    #[test]
+    fn no_intersect1() {
+        let sphere = Sphere {
+            p: Point::new(4f64, 5f64, 6f64),
+            r: 1f64,
+            texture: UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 1f64,
+            },
+        };
+
+        let point = Point::new(0f64, 1f64, -0.3f64);
+        let ray = Vector::new(1f64, 1f64, 1f64);
+        let is_intersect = sphere.is_intersect(point, ray);
+
+        dbg!(&is_intersect);
+        assert_eq!(false, is_intersect)
+    }
+
+    #[test]
+    fn no_intersect2() {
+        let sphere = Sphere {
+            p: Point::new(4f64, 5f64, 6f64),
+            r: 1f64,
+            texture: UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 1f64,
+            },
+        };
+
+        let point = Point::new(0f64, 1f64, -1f64);
+        let ray = Vector::new(1f64, 1f64, 1f64);
+        let is_intersect = sphere.is_intersect(point, ray);
+
+        dbg!(&is_intersect);
+        assert_eq!(false, is_intersect)
+    }
+
+    #[test]
+    fn no_intersect3() {
+        let sphere = Sphere {
+            p: Point::new(5f64, 0f64, 5f64),
+            r: 1f64,
+            texture: UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 1f64,
+            },
+        };
+
+        let point = Point::new(0f64, 0f64, 0f64);
+        let ray = Vector::new(1f64, 1f64, 1f64);
+        let is_intersect = sphere.is_intersect(point, ray);
+
+        dbg!(&is_intersect);
+        assert_eq!(false, is_intersect)
     }
 }
