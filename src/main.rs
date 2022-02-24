@@ -1,4 +1,5 @@
 mod color;
+mod image;
 mod point;
 mod vector;
 
