@@ -71,6 +71,8 @@ impl Vector {
     }
 
     pub fn rotate_around(&self, k: &Vector, angle: f64) -> Vector {
+        // from here https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+        // test here https://www.vcalc.com/wiki/vCalc/V3+-+Vector+Rotation
         let cos = angle.cos();
         let sin = angle.sin();
 
