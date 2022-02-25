@@ -10,8 +10,8 @@ pub struct Sphere {
     pub texture: UniformTexture,
 }
 
-impl Intersect for Sphere {
-    fn is_intersect(&self, p: Point, v: Vector) -> bool {
+impl Sphere {
+    fn intersect_coeff(&self, p: Point, v: Vector) -> (f64, f64, f64) {
         // taken from
         // http://ambrsoft.com/TrigoCalc/Sphere/SpherLineIntersection_.htm
         // a = (x2 - x1)2 + (y2 - y1)2 + (z2 - z1)2
@@ -27,13 +27,38 @@ impl Intersect for Sphere {
         let c =
             (xc - x1).powf(2f64) + (yc - y1).powf(2f64) + (zc - z1).powf(2f64) - self.r.powf(2f64);
 
-        println!("{:?} = {}", (a, b, c), (b * b) - 4f64 * a * c);
+        (a, b, c)
+    }
+}
 
+impl Intersect for Sphere {
+    fn is_intersect(&self, p: Point, v: Vector) -> bool {
+        let (a, b, c) = self.intersect_coeff(p, v);
         (b * b) - 4f64 * a * c >= 0f64
     }
 
     fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {
-        todo!()
+        let (a, b, c) = self.intersect_coeff(p, v);
+
+        if b.powf(2f64) - 4f64 * a * c < 0f64 {
+            return Vec::new();
+        }
+
+        if b.powf(2f64) - 4f64 * a * c == 0f64 {
+            let t = -b / (2f64 * a);
+            let p = p + (v * t).to_point();
+            return vec![p];
+        }
+
+        let t_sqrt = (b.powf(2f64) - 4f64 * a * c).sqrt();
+
+        let t1 = (-b + t_sqrt) / (2f64 * a);
+        let t2 = (-b - t_sqrt) / (2f64 * a);
+
+        let p1 = p + (v * t1).to_point();
+        let p2 = p + (v * t2).to_point();
+
+        return vec![p1, p2];
     }
 }
 
@@ -97,6 +122,51 @@ mod tests {
         let is_intersect = SPHERE.is_intersect(point, ray);
 
         assert_eq!(true, is_intersect)
+    }
+
+    #[test]
+    fn intersect_points0() {
+        let point = Point::new(4f64, 1f64, 7.1f64);
+        let ray = Vector::new(0f64, 1f64, 0f64);
+        let intersect_points = SPHERE.intersect_points(point, ray);
+
+        assert_eq!(intersect_points.len(), 0);
+    }
+
+    #[test]
+    fn intersect_points1() {
+        let point = Point::new(4f64, 1f64, 5f64);
+        let ray = Vector::new(0f64, 1f64, 0f64);
+        let intersect_points = SPHERE.intersect_points(point, ray);
+
+        assert_eq!(intersect_points.len(), 1);
+        let first = intersect_points[0];
+
+        let first_point = &*format!("({:.2} , {:.2} , {:.2} )", first.x, first.y, first.z);
+        assert_eq!(first_point, "(4.00 , 5.00 , 5.00 )");
+    }
+
+    #[test]
+    fn intersect_points2() {
+        let point = Point::new(0f64, 1f64, 2f64);
+        let ray = Vector::new(1f64, 1f64, 1f64);
+        let intersect_points = SPHERE.intersect_points(point, ray);
+
+        assert_eq!(intersect_points.len(), 2);
+        let first = intersect_points[0];
+        let second = intersect_points[1];
+
+        let (first, second) = if first.x > second.x {
+            (second, first)
+        } else {
+            (first, second)
+        };
+
+        let first_point = format!("({:.2} , {:.2} , {:.2} )", first.x, first.y, first.z);
+        let second_point = format!("({:.2} , {:.2} , {:.2} )", second.x, second.y, second.z);
+
+        assert_eq!(&*first_point, "(3.42 , 4.42 , 5.42 )");
+        assert_eq!(&*second_point, "(4.58 , 5.58 , 6.58 )");
     }
 
     #[test]
