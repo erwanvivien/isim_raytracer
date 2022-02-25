@@ -1,6 +1,8 @@
+//! Vector3
 use crate::point::Point;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+/// Vector3
 #[derive(Debug, PartialOrd, PartialEq, Copy, Clone)]
 pub struct Vector {
     pub x: f64,
@@ -13,6 +15,7 @@ impl Vector {
         Vector { x, y, z }
     }
 
+    /// Magnitude: sqrt(sum_i(a_i ^ 2))
     pub fn mag(&self) -> f64 {
         (self.x.powf(2f64) + self.y.powf(2f64) + self.z.powf(2f64)).sqrt()
     }

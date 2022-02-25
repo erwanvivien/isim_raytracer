@@ -1,5 +1,7 @@
+mod camera;
 mod color;
 mod image;
+mod light;
 mod object;
 mod point;
 mod texture;

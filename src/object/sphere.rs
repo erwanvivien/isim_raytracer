@@ -31,6 +31,10 @@ impl Intersect for Sphere {
 
         (b * b) - 4f64 * a * c >= 0f64
     }
+
+    fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {
+        todo!()
+    }
 }
 
 impl Normal for Sphere {

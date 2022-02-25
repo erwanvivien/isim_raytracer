@@ -1,3 +1,6 @@
+//! Color representation
+
+/// Color representation in rgb
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq, Copy, Clone)]
 pub struct Color {
     r: u8,

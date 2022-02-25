@@ -1,5 +1,7 @@
+//! Basic image representation with `Color` list
 use crate::color::Color;
 
+/// Contains list of `color::Color`
 pub struct Image {
     height: usize,
     width: usize,
