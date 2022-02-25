@@ -14,18 +14,11 @@ impl Sphere {
     fn intersect_coeff(&self, p: Point, v: Vector) -> (f64, f64, f64) {
         // taken from
         // http://ambrsoft.com/TrigoCalc/Sphere/SpherLineIntersection_.htm
-        // a = (x2 - x1)2 + (y2 - y1)2 + (z2 - z1)2
-        // b = - 2[(x2 - x1)(xc - x1) + (y2 - y1)(yc - y1) + (z2 - z1)(zc - z1)]
-        // c = (xc - x1)2 + (yc - y1)2 + (zc - z1)2 - r2
-        let (x1, x2, xc) = (p.x, v.x + p.x, self.p.x);
-        let (y1, y2, yc) = (p.y, v.y + p.y, self.p.y);
-        let (z1, z2, zc) = (p.z, v.z + p.z, self.p.z);
+        let cp = (self.p - p).to_vec();
 
-        let a = (x2 - x1).powf(2f64) + (y2 - y1).powf(2f64) + (z2 - z1).powf(2f64);
-        let b = (x2 - x1) * (xc - x1) + (y2 - y1) * (yc - y1) + (z2 - z1) * (zc - z1);
-        let b = -2f64 * b;
-        let c =
-            (xc - x1).powf(2f64) + (yc - y1).powf(2f64) + (zc - z1).powf(2f64) - self.r.powf(2f64);
+        let a = v.powf(2f64).sum();
+        let b = -2f64 * v.mul(cp).sum();
+        let c = cp.powf(2f64).sum() - self.r.powf(2f64);
 
         (a, b, c)
     }

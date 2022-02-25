@@ -33,6 +33,26 @@ impl Vector {
             z: self.z,
         }
     }
+
+    pub fn powf(&self, e: f64) -> Vector {
+        Vector {
+            x: self.x.powf(e),
+            y: self.y.powf(e),
+            z: self.z.powf(e),
+        }
+    }
+
+    pub fn sum(&self) -> f64 {
+        self.x + self.y + self.z
+    }
+
+    pub fn mul(&self, v: Vector) -> Vector {
+        Vector {
+            x: self.x * v.x,
+            y: self.y * v.y,
+            z: self.z * v.z,
+        }
+    }
 }
 
 impl Add<Vector> for Vector {
