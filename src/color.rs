@@ -52,18 +52,10 @@ mod tests {
     use crate::color::Color;
 
     #[test]
-    fn red() {
-        assert_eq!(Color::RED.values(), (255, 0, 0))
-    }
-
-    #[test]
-    fn green() {
-        assert_eq!(Color::GREEN.values(), (0, 255, 0))
-    }
-
-    #[test]
-    fn blue() {
-        assert_eq!(Color::BLUE.values(), (0, 0, 255))
+    fn colors() {
+        assert_eq!(Color::RED.values(), (255, 0, 0));
+        assert_eq!(Color::GREEN.values(), (0, 255, 0));
+        assert_eq!(Color::BLUE.values(), (0, 0, 255));
     }
 
     #[test]
@@ -74,5 +66,10 @@ mod tests {
     #[test]
     fn from_values() {
         assert_eq!(Color::RED, Color::from_values(255, 0, 0))
+    }
+
+    #[test]
+    fn to_value() {
+        assert_eq!(0xFF000000, Color::RED.value())
     }
 }

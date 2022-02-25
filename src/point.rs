@@ -13,6 +13,7 @@ impl Point {
         Point { x, y, z }
     }
 
+    #[allow(dead_code)]
     pub fn to_vec(&self) -> Vector {
         Vector {
             x: self.x,

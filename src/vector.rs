@@ -22,6 +22,7 @@ impl Vector {
         *self / mag
     }
 
+    #[allow(dead_code)]
     pub fn to_point(&self) -> Point {
         Point {
             x: self.x,
