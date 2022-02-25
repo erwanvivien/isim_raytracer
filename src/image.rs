@@ -16,6 +16,18 @@ impl Image {
             pixels: Vec::with_capacity(height * width),
         }
     }
+
+    pub fn height(&self) -> usize {
+        self.height
+    }
+
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    pub fn push(&mut self, c: Color) {
+        self.pixels.push(c);
+    }
 }
 
 mod tests {

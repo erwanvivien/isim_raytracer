@@ -82,9 +82,6 @@ impl Vector {
         let v2 = k.cross_product(self) * sin;
         let v3 = k * (k * *self) * (1f64 - cos);
 
-        dbg!((cos, sin));
-        dbg!((v1, v2, v3));
-
         return v1 + v2 + v3;
     }
 }

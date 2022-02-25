@@ -11,20 +11,20 @@ pub struct Color {
 type ColorTuple = (u8, u8, u8);
 
 impl Color {
-    const BLACK: Color = Color { r: 0, g: 0, b: 0 };
-    const RED: Color = Color {
+    pub const BLACK: Color = Color { r: 0, g: 0, b: 0 };
+    pub const RED: Color = Color {
         r: 255,
         ..Color::BLACK
     };
-    const GREEN: Color = Color {
+    pub const GREEN: Color = Color {
         g: 255,
         ..Color::BLACK
     };
-    const BLUE: Color = Color {
+    pub const BLUE: Color = Color {
         b: 255,
         ..Color::BLACK
     };
-    const WHITE: Color = Color {
+    pub const WHITE: Color = Color {
         r: 255,
         g: 255,
         b: 255,

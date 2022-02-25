@@ -1,5 +1,5 @@
 //! Lighting container
-mod point;
+pub mod point;
 
 pub trait Lighting {}
 

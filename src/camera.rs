@@ -4,13 +4,13 @@ use crate::vector::Vector;
 
 /// Struct representing the camera
 pub struct Camera {
-    center: Point,
-    spotted_point: Point,
-    up: Vector,
-    right: Vector,
-    forward: Vector,
-    alpha: f64,
-    beta: f64,
+    pub center: Point,
+    pub spotted_point: Point,
+    pub up: Vector,
+    pub right: Vector,
+    pub forward: Vector,
+    pub alpha: f64,
+    pub beta: f64,
 }
 
 impl Camera {
