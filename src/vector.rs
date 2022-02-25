@@ -61,6 +61,30 @@ impl Vector {
             z: v1.x * v2.y - v2.x * v1.y,
         }
     }
+
+    pub fn cross_product(&self, v: &Vector) -> Vector {
+        Vector {
+            x: self.y * v.z - self.z * v.y,
+            y: self.z * v.x - self.x * v.z,
+            z: self.x * v.y - self.y * v.x,
+        }
+    }
+
+    pub fn rotate_around(&self, k: &Vector, angle: f64) -> Vector {
+        let cos = angle.cos();
+        let sin = angle.sin();
+
+        let k = k.normalize();
+
+        let v1 = *self * cos;
+        let v2 = k.cross_product(self) * sin;
+        let v3 = k * (k * *self) * (1f64 - cos);
+
+        dbg!((cos, sin));
+        dbg!((v1, v2, v3));
+
+        return v1 + v2 + v3;
+    }
 }
 
 impl Add<Vector> for Vector {
@@ -220,5 +244,46 @@ mod tests {
 
         let nm = Vector::new(-1f64, 2f64, -1f64);
         assert_eq!(nm, Vector::normal_vec(&v2, &v1))
+    }
+
+    fn cross_product() {
+        let v1 = Vector::new(1f64, 3f64, 5f64);
+        let v2 = Vector::new(2f64, 4f64, 5f64);
+
+        let cross = v1.cross_product(&v2);
+        assert_eq!(cross, Vector::new(-5f64, -6f64, -2f64))
+    }
+
+    #[test]
+    fn rotate1() {
+        let v1 = Vector::new(1f64, 1f64, 1f64);
+        let v2 = Vector::new(-1f64, 1f64, -1f64);
+
+        let r = v2.rotate_around(&v1, std::f64::consts::PI);
+
+        let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+        assert_eq!(&*r, "(0.33, -1.67, 0.33)")
+    }
+
+    #[test]
+    fn rotate2() {
+        let v1 = Vector::new(0f64, 1f64, 0f64);
+        let v2 = Vector::new(1f64, 1f64, 1f64);
+
+        let r = v2.rotate_around(&v1, std::f64::consts::PI);
+
+        let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+        assert_eq!(&*r, "(-1.00, 1.00, -1.00)")
+    }
+
+    #[test]
+    fn rotate3() {
+        let v1 = Vector::new(0f64, -1f64, 0f64);
+        let v2 = Vector::new(1f64, 1f64, 1f64);
+
+        let r = v2.rotate_around(&v1, std::f64::consts::PI);
+
+        let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+        assert_eq!(&*r, "(-1.00, 1.00, -1.00)")
     }
 }
