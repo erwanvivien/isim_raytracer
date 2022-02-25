@@ -78,7 +78,6 @@ mod tests {
         let ray = Vector::new(1f64, 1f64, 1f64);
         let is_intersect = SPHERE.is_intersect(point, ray);
 
-        dbg!(&is_intersect);
         assert_eq!(true, is_intersect)
     }
 
@@ -88,7 +87,6 @@ mod tests {
         let ray = Vector::new(1f64, 1f64, 1f64);
         let is_intersect = SPHERE.is_intersect(point, ray);
 
-        dbg!(&is_intersect);
         assert_eq!(true, is_intersect)
     }
 
@@ -98,7 +96,6 @@ mod tests {
         let ray = Vector::new(1f64, 1f64, 1.5f64);
         let is_intersect = SPHERE.is_intersect(point, ray);
 
-        dbg!(&is_intersect);
         assert_eq!(true, is_intersect)
     }
 
@@ -108,7 +105,6 @@ mod tests {
         let ray = Vector::new(1f64, 1f64, 1f64);
         let is_intersect = SPHERE.is_intersect(point, ray);
 
-        dbg!(&is_intersect);
         assert_eq!(false, is_intersect)
     }
 
@@ -118,7 +114,6 @@ mod tests {
         let ray = Vector::new(1f64, 1f64, 1f64);
         let is_intersect = SPHERE.is_intersect(point, ray);
 
-        dbg!(&is_intersect);
         assert_eq!(false, is_intersect)
     }
 
@@ -128,7 +123,6 @@ mod tests {
         let ray = Vector::new(1f64, 1f64, 1f64);
         let is_intersect = SPHERE.is_intersect(point, ray);
 
-        dbg!(&is_intersect);
         assert_eq!(false, is_intersect)
     }
 
@@ -148,7 +142,6 @@ mod tests {
         let ray = Vector::new(1f64, 1f64, 1f64);
         let is_intersect = sphere.is_intersect(point, ray);
 
-        dbg!(&is_intersect);
         assert_eq!(false, is_intersect)
     }
 }
