@@ -9,7 +9,7 @@ pub struct Image {
 }
 
 impl Image {
-    fn new(height: usize, width: usize) -> Self {
+    pub fn new(height: usize, width: usize) -> Self {
         Image {
             height,
             width,
