@@ -53,6 +53,14 @@ impl Vector {
             z: self.z * v.z,
         }
     }
+
+    pub fn normal_vec(v1: &Vector, v2: &Vector) -> Vector {
+        Vector {
+            x: v1.y * v2.z - v2.y * v1.z,
+            y: -(v1.x * v2.z - v2.x * v1.z),
+            z: v1.x * v2.y - v2.x * v1.y,
+        }
+    }
 }
 
 impl Add<Vector> for Vector {
@@ -194,5 +202,23 @@ mod tests {
         v1 = v1 / 5f64;
 
         assert_eq!(v1, Vector::new(2f64, 4f64, 0f64))
+    }
+
+    #[test]
+    fn normal_vec1() {
+        let v1 = Vector::new(2f64, 3f64, 4f64);
+        let v2 = Vector::new(1f64, 2f64, 3f64);
+
+        let nm = Vector::new(1f64, -2f64, 1f64);
+        assert_eq!(nm, Vector::normal_vec(&v1, &v2))
+    }
+
+    #[test]
+    fn normal_vec2() {
+        let v1 = Vector::new(2f64, 3f64, 4f64);
+        let v2 = Vector::new(1f64, 2f64, 3f64);
+
+        let nm = Vector::new(-1f64, 2f64, -1f64);
+        assert_eq!(nm, Vector::normal_vec(&v2, &v1))
     }
 }
