@@ -1,16 +1,15 @@
 use crate::object::{Intersect, Normal};
 use crate::point::Point;
-use crate::texture::uniform::UniformTexture;
-use crate::texture::Lighting;
+use crate::texture::LightCoefficients;
 use crate::vector::Vector;
 
-pub struct Sphere {
+pub struct Sphere<T: LightCoefficients> {
     pub p: Point,
     pub r: f64,
-    pub texture: UniformTexture,
+    pub texture: T,
 }
 
-impl Sphere {
+impl<T: LightCoefficients> Sphere<T> {
     fn intersect_coeff(&self, p: Point, v: Vector) -> (f64, f64, f64) {
         // taken from
         // http://ambrsoft.com/TrigoCalc/Sphere/SpherLineIntersection_.htm
@@ -24,7 +23,7 @@ impl Sphere {
     }
 }
 
-impl Intersect for Sphere {
+impl<T: LightCoefficients> Intersect for Sphere<T> {
     fn is_intersect(&self, p: Point, v: Vector) -> bool {
         let (a, b, c) = self.intersect_coeff(p, v);
         (b * b) - 4f64 * a * c >= 0f64
@@ -55,7 +54,7 @@ impl Intersect for Sphere {
     }
 }
 
-impl Normal for Sphere {
+impl<T: LightCoefficients> Normal for Sphere<T> {
     fn normal(&self, p: Point) -> Vector {
         let tmp = p - self.p;
         Vector {
@@ -67,7 +66,7 @@ impl Normal for Sphere {
     }
 }
 
-impl Lighting for Sphere {
+impl<T: LightCoefficients> LightCoefficients for Sphere<T> {
     fn coefficients(&self, point: Point) -> (f64, f64, f64) {
         self.texture.coefficients(point)
     }
@@ -80,7 +79,7 @@ mod tests {
     use crate::texture::uniform::UniformTexture;
     use crate::vector::Vector;
 
-    const SPHERE: Sphere = Sphere {
+    const SPHERE: Sphere<UniformTexture> = Sphere {
         p: Point::new(4f64, 5f64, 6f64),
         r: 1f64,
         texture: UniformTexture {

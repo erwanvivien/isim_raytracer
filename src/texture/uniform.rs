@@ -1,5 +1,5 @@
 use crate::point::Point;
-use crate::texture::Lighting;
+use crate::texture::LightCoefficients;
 
 pub struct UniformTexture {
     pub kd: f64, // diffusion
@@ -7,7 +7,7 @@ pub struct UniformTexture {
     pub ka: f64, // ambiance
 }
 
-impl Lighting for UniformTexture {
+impl LightCoefficients for UniformTexture {
     fn coefficients(&self, _point: Point) -> (f64, f64, f64) {
         (self.kd, self.ks, self.ka)
     }

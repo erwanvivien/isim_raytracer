@@ -3,14 +3,14 @@ use crate::point::Point;
 
 pub mod uniform;
 
-pub trait Lighting {
+pub trait LightCoefficients {
     /// Returns lighting coefficients at `p` point
     fn coefficients(&self, point: Point) -> (f64, f64, f64);
 }
 
 pub struct Texture {}
 
-impl Lighting for Texture {
+impl LightCoefficients for Texture {
     fn coefficients(&self, _point: Point) -> (f64, f64, f64) {
         unimplemented!()
     }

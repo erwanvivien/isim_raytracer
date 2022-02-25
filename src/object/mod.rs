@@ -11,7 +11,8 @@ pub trait Intersect {
     /// Returns collision points
     fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point>;
 }
-trait Normal {
+
+pub trait Normal {
     /// Returns the normal at `p` point
     fn normal(&self, p: Point) -> Vector;
 }
