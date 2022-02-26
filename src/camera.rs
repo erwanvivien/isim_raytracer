@@ -19,6 +19,14 @@ impl Camera {
         let forward = (spotted_point - center).to_vec().normalize();
         let right = Vector::normal_vec(&up, &forward);
 
+        let perpendicular = up * forward;
+        if up * forward != 0f64 {
+            return panic!(
+                "Up & forward not perpendicular: up * forward = {}",
+                perpendicular
+            );
+        }
+
         Camera {
             center,
             spotted_point,
