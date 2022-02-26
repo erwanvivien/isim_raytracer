@@ -18,8 +18,8 @@ mod texture;
 mod vector;
 
 const CAMERA_CENTER: Point = Point::new(0f64, 0f64, 0f64);
-const SPOTTED_POINT: Point = Point::new(1f64, 0.5f64, 0f64);
-const UP: Vector = Vector::new(-0.5f64, 1f64, 0f64);
+const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
+const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 
 const OBJ1_POINT: Point = Point::new(5f64, 0f64, 0f64);
 const OBJ2_POINT: Point = Point::new(5f64, 0f64, 3f64);
@@ -31,8 +31,7 @@ fn main() {
         CAMERA_CENTER,
         SPOTTED_POINT,
         UP,
-        std::f64::consts::FRAC_PI_2,
-        std::f64::consts::FRAC_PI_2,
+        std::f64::consts::FRAC_PI_2 * 110f64 / 90f64,
     );
 
     let obj1 = Sphere {
@@ -75,6 +74,6 @@ fn main() {
         objects: vec![Box::new(obj1), Box::new(obj2)],
     };
 
-    let img = scene.image(800, 800);
+    let img = scene.image(400, 600);
     let _ = img.save_png("test.png");
 }

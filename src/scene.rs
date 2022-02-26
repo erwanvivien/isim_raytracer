@@ -51,7 +51,9 @@ impl Scene {
         let height_half = (height / 2) as i64;
         let width_half = (width / 2) as i64;
 
-        let step_y = cam.beta / height as f64;
+        let beta = cam.alpha * (height as f64 / width as f64);
+
+        let step_y = beta / height as f64;
         let step_x = cam.alpha / width as f64;
 
         for i in (-height_half..height_half).map(|i| step_y * i as f64) {
