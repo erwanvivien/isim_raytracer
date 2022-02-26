@@ -17,7 +17,7 @@ impl LightCoefficients for UniformTexture {
 }
 
 impl GetColor for UniformTexture {
-    fn color(&self) -> Color {
+    fn color(&self, _point: Point) -> Color {
         self.color
     }
 }

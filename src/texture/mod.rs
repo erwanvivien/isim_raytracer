@@ -10,7 +10,7 @@ pub trait LightCoefficients {
 }
 
 pub trait GetColor {
-    fn color(&self) -> Color;
+    fn color(&self, p: Point) -> Color;
 }
 
 pub trait TextureTrait: GetColor + LightCoefficients {}
@@ -24,7 +24,7 @@ impl LightCoefficients for Texture {
 }
 
 impl GetColor for Texture {
-    fn color(&self) -> Color {
+    fn color(&self, _p: Point) -> Color {
         unimplemented!()
     }
 }
