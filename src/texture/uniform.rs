@@ -1,10 +1,13 @@
+use crate::color::Color;
 use crate::point::Point;
-use crate::texture::LightCoefficients;
+use crate::texture::{GetColor, LightCoefficients, TextureTrait};
 
 pub struct UniformTexture {
     pub kd: f64, // diffusion
     pub ks: f64, // specularite
     pub ka: f64, // ambiance
+
+    pub color: Color,
 }
 
 impl LightCoefficients for UniformTexture {
@@ -12,3 +15,11 @@ impl LightCoefficients for UniformTexture {
         (self.kd, self.ks, self.ka)
     }
 }
+
+impl GetColor for UniformTexture {
+    fn color(&self) -> Color {
+        self.color
+    }
+}
+
+impl TextureTrait for UniformTexture {}

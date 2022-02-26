@@ -1,9 +1,9 @@
 //! Lighting container
 pub mod point;
 
-pub trait Lighting {}
+pub trait LightTrait {}
 
 /// Abstract struct for Lighting
 pub struct Light {}
 
-impl Lighting for Light {}
+impl LightTrait for Light {}

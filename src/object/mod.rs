@@ -2,7 +2,9 @@
 pub mod sphere;
 
 use crate::point::Point;
+use crate::texture::{LightCoefficients, Texture, TextureTrait};
 use crate::vector::Vector;
+use crate::Color;
 
 /// Defines functions to asserts collision of ray to object
 pub trait Intersect {
@@ -17,6 +19,14 @@ pub trait Normal {
     fn normal(&self, p: Point) -> Vector;
 }
 
+pub trait GetTexture {
+    fn texture(&self) -> &Box<dyn TextureTrait>;
+}
+
+/// SuperTrait for objects
+pub trait ObjectTrait: Intersect + Normal + GetTexture {}
+
+/// Object
 pub struct Object {}
 
 impl Intersect for Object {
@@ -33,3 +43,11 @@ impl Normal for Object {
         unimplemented!()
     }
 }
+
+impl GetTexture for Object {
+    fn texture(&self) -> &Box<dyn TextureTrait> {
+        unimplemented!()
+    }
+}
+
+impl ObjectTrait for Object {}

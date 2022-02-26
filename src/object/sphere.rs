@@ -1,15 +1,16 @@
-use crate::object::{Intersect, Normal};
+use crate::object::{GetTexture, Intersect, Normal, ObjectTrait};
 use crate::point::Point;
-use crate::texture::LightCoefficients;
+use crate::texture::{LightCoefficients, Texture, TextureTrait};
 use crate::vector::Vector;
+use crate::Color;
 
-pub struct Sphere<T: LightCoefficients> {
+pub struct Sphere {
     pub p: Point,
     pub r: f64,
-    pub texture: T,
+    pub texture: Box<dyn TextureTrait>,
 }
 
-impl<T: LightCoefficients> Sphere<T> {
+impl Sphere {
     fn intersect_coeff(&self, p: Point, v: Vector) -> (f64, f64, f64) {
         // taken from
         // http://ambrsoft.com/TrigoCalc/Sphere/SpherLineIntersection_.htm
@@ -23,7 +24,7 @@ impl<T: LightCoefficients> Sphere<T> {
     }
 }
 
-impl<T: LightCoefficients> Intersect for Sphere<T> {
+impl Intersect for Sphere {
     fn is_intersect(&self, p: Point, v: Vector) -> bool {
         let (a, b, c) = self.intersect_coeff(p, v);
         (b * b) - 4f64 * a * c >= 0f64
@@ -54,7 +55,7 @@ impl<T: LightCoefficients> Intersect for Sphere<T> {
     }
 }
 
-impl<T: LightCoefficients> Normal for Sphere<T> {
+impl Normal for Sphere {
     fn normal(&self, p: Point) -> Vector {
         let tmp = p - self.p;
         Vector {
@@ -66,34 +67,49 @@ impl<T: LightCoefficients> Normal for Sphere<T> {
     }
 }
 
-impl<T: LightCoefficients> LightCoefficients for Sphere<T> {
+impl LightCoefficients for Sphere {
     fn coefficients(&self, point: Point) -> (f64, f64, f64) {
         self.texture.coefficients(point)
     }
 }
 
+impl GetTexture for Sphere {
+    fn texture(&self) -> &Box<dyn TextureTrait> {
+        &self.texture
+    }
+}
+
+impl ObjectTrait for Sphere {}
+
 mod tests {
+    use crate::color::Color;
     use crate::object::sphere::Sphere;
     use crate::object::Intersect;
     use crate::point::Point;
     use crate::texture::uniform::UniformTexture;
     use crate::vector::Vector;
 
-    const SPHERE: Sphere<UniformTexture> = Sphere {
-        p: Point::new(4f64, 5f64, 6f64),
-        r: 1f64,
-        texture: UniformTexture {
-            kd: 1f64,
-            ka: 1f64,
-            ks: 1f64,
-        },
+    const UNIFORM_TEXTURE: UniformTexture = UniformTexture {
+        kd: 1f64,
+        ka: 1f64,
+        ks: 1f64,
+
+        color: Color::BLACK,
     };
+
+    fn sphere() -> Sphere {
+        Sphere {
+            p: Point::new(4f64, 5f64, 6f64),
+            r: 1f64,
+            texture: Box::new(UNIFORM_TEXTURE),
+        }
+    }
 
     #[test]
     fn intersect0() {
         let point = Point::new(0f64, 1f64, 2f64);
         let ray = Vector::new(1f64, 1f64, 1f64);
-        let is_intersect = SPHERE.is_intersect(point, ray);
+        let is_intersect = sphere().is_intersect(point, ray);
 
         assert_eq!(true, is_intersect)
     }
@@ -102,7 +118,7 @@ mod tests {
     fn intersect1() {
         let point = Point::new(0f64, 1f64, 1f64);
         let ray = Vector::new(1f64, 1f64, 1f64);
-        let is_intersect = SPHERE.is_intersect(point, ray);
+        let is_intersect = sphere().is_intersect(point, ray);
 
         assert_eq!(true, is_intersect)
     }
@@ -111,7 +127,7 @@ mod tests {
     fn intersect2() {
         let point = Point::new(0f64, 1f64, 0f64);
         let ray = Vector::new(1f64, 1f64, 1.5f64);
-        let is_intersect = SPHERE.is_intersect(point, ray);
+        let is_intersect = sphere().is_intersect(point, ray);
 
         assert_eq!(true, is_intersect)
     }
@@ -120,7 +136,7 @@ mod tests {
     fn intersect_points0() {
         let point = Point::new(4f64, 1f64, 7.1f64);
         let ray = Vector::new(0f64, 1f64, 0f64);
-        let intersect_points = SPHERE.intersect_points(point, ray);
+        let intersect_points = sphere().intersect_points(point, ray);
 
         assert_eq!(intersect_points.len(), 0);
     }
@@ -129,7 +145,7 @@ mod tests {
     fn intersect_points1() {
         let point = Point::new(4f64, 1f64, 5f64);
         let ray = Vector::new(0f64, 1f64, 0f64);
-        let intersect_points = SPHERE.intersect_points(point, ray);
+        let intersect_points = sphere().intersect_points(point, ray);
 
         assert_eq!(intersect_points.len(), 1);
         let first = intersect_points[0];
@@ -142,7 +158,7 @@ mod tests {
     fn intersect_points2() {
         let point = Point::new(0f64, 1f64, 2f64);
         let ray = Vector::new(1f64, 1f64, 1f64);
-        let intersect_points = SPHERE.intersect_points(point, ray);
+        let intersect_points = sphere().intersect_points(point, ray);
 
         assert_eq!(intersect_points.len(), 2);
         let first = intersect_points[0];
@@ -165,7 +181,7 @@ mod tests {
     fn no_intersect0() {
         let point = Point::new(0f64, 1f64, -0.5f64);
         let ray = Vector::new(1f64, 1f64, 1f64);
-        let is_intersect = SPHERE.is_intersect(point, ray);
+        let is_intersect = sphere().is_intersect(point, ray);
 
         assert_eq!(false, is_intersect)
     }
@@ -174,7 +190,7 @@ mod tests {
     fn no_intersect1() {
         let point = Point::new(0f64, 1f64, -0.3f64);
         let ray = Vector::new(1f64, 1f64, 1f64);
-        let is_intersect = SPHERE.is_intersect(point, ray);
+        let is_intersect = sphere().is_intersect(point, ray);
 
         assert_eq!(false, is_intersect)
     }
@@ -183,7 +199,7 @@ mod tests {
     fn no_intersect2() {
         let point = Point::new(0f64, 1f64, -1f64);
         let ray = Vector::new(1f64, 1f64, 1f64);
-        let is_intersect = SPHERE.is_intersect(point, ray);
+        let is_intersect = sphere().is_intersect(point, ray);
 
         assert_eq!(false, is_intersect)
     }
@@ -193,11 +209,7 @@ mod tests {
         let sphere = Sphere {
             p: Point::new(5f64, 0f64, 5f64),
             r: 1f64,
-            texture: UniformTexture {
-                kd: 1f64,
-                ka: 1f64,
-                ks: 1f64,
-            },
+            texture: Box::new(UNIFORM_TEXTURE),
         };
 
         let point = Point::new(0f64, 0f64, 0f64);

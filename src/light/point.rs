@@ -1,4 +1,4 @@
-use crate::light::Lighting;
+use crate::light::LightTrait;
 use crate::point::Point;
 
 /// Point Lighting
@@ -6,4 +6,4 @@ pub struct PointLight {
     pub point: Point,
 }
 
-impl Lighting for PointLight {}
+impl LightTrait for PointLight {}

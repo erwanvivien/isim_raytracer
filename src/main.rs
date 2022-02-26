@@ -1,4 +1,5 @@
 use crate::camera::Camera;
+use crate::color::Color;
 use crate::light::point::PointLight;
 use crate::object::sphere::Sphere;
 use crate::point::Point;
@@ -37,20 +38,31 @@ fn main() {
     let obj1 = Sphere {
         p: OBJ1_POINT,
         r: 2f64,
-        texture: UniformTexture {
+        texture: Box::new(UniformTexture {
             kd: 1f64,
             ka: 1f64,
             ks: 1f64,
-        },
+            color: Color {
+                r: 66,
+                g: 135,
+                b: 245,
+            },
+        }),
     };
     let obj2 = Sphere {
         p: OBJ2_POINT,
         r: 1f64,
-        texture: UniformTexture {
+        texture: Box::new(UniformTexture {
             kd: 1f64,
             ka: 1f64,
             ks: 1f64,
-        },
+
+            color: Color {
+                r: 227,
+                g: 66,
+                b: 245,
+            },
+        }),
     };
 
     let light = PointLight {
@@ -59,8 +71,8 @@ fn main() {
 
     let scene = Scene {
         cam,
-        lights: vec![light],
-        objects: vec![obj1, obj2],
+        lights: vec![Box::new(light)],
+        objects: vec![Box::new(obj1), Box::new(obj2)],
     };
 
     let img = scene.image(800, 800);

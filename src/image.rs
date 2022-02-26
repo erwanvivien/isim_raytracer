@@ -105,7 +105,7 @@ impl Image {
 
 mod tests {
     use crate::image::Image;
-    use crate::{Camera, Point, PointLight, Scene, Sphere, UniformTexture, Vector};
+    use crate::{Camera, Color, Point, PointLight, Scene, Sphere, UniformTexture, Vector};
     use image::GenericImageView;
 
     #[test]
@@ -136,20 +136,22 @@ mod tests {
         let obj1 = Sphere {
             p: OBJ1_POINT,
             r: 2f64,
-            texture: UniformTexture {
+            texture: Box::new(UniformTexture {
                 kd: 1f64,
                 ka: 1f64,
                 ks: 1f64,
-            },
+                color: Color::BLACK,
+            }),
         };
         let obj2 = Sphere {
             p: OBJ2_POINT,
             r: 1f64,
-            texture: UniformTexture {
+            texture: Box::new(UniformTexture {
                 kd: 1f64,
                 ka: 1f64,
                 ks: 1f64,
-            },
+                color: Color::BLACK,
+            }),
         };
 
         let light = PointLight {
@@ -158,8 +160,8 @@ mod tests {
 
         let scene = Scene {
             cam,
-            lights: vec![light],
-            objects: vec![obj1, obj2],
+            lights: vec![Box::new(light)],
+            objects: vec![Box::new(obj1), Box::new(obj2)],
         };
 
         let img = scene.image(80, 80);
