@@ -3,7 +3,7 @@ use crate::color::Color;
 use crate::image::Image;
 use crate::light::LightTrait;
 use crate::object::ObjectTrait;
-use crate::Vector;
+use crate::{Point, Vector};
 
 pub struct Scene {
     pub cam: Camera,
@@ -11,12 +11,25 @@ pub struct Scene {
     pub objects: Vec<Box<dyn ObjectTrait>>,
 }
 
-fn cast_ray_rebound(v: Vector, scene: &Scene) -> Color {
+fn cast_ray_rebound(p: Point, obj: &Box<dyn ObjectTrait>, v: Vector, scene: &Scene) -> Color {
+    let normal = obj.normal(p);
+
+    for lights in &scene.lights {
+        let l_vec = lights.point() - p;
+        let intensity = lights.intensity();
+
+        let (kd, ks, ka) = obj.texture().coefficients(p);
+
+        let out = (obj.texture().color(p).to_vec()).mul(intensity) * kd * (normal * l_vec);
+
+        return out.into();
+    }
+
     Color::BLACK
 }
 
 fn cast_ray_cam(v: Vector, scene: &Scene) -> Color {
-    let mut color = Color::WHITE;
+    let (mut closest_obj, mut point) = (None, None);
     let mut distance = f64::MAX;
 
     for obj in &scene.objects {
@@ -28,18 +41,23 @@ fn cast_ray_cam(v: Vector, scene: &Scene) -> Color {
         let last = intersect_points.last().unwrap().clone();
         let mut intersect = intersect_points
             .into_iter()
-            .map(|p| p.to_vec().mag())
+            .map(|p| p.mag())
             .collect::<Vec<_>>();
         intersect.sort_by_key(|&p| p as u128);
 
         let d = *intersect.last().unwrap();
         if d < distance {
-            color = (*obj.texture()).color(last);
             distance = d;
+            closest_obj = Some(obj);
+            point = Some(last);
         }
     }
 
-    return color;
+    if closest_obj.is_none() {
+        return Color::BLACK;
+    }
+
+    return cast_ray_rebound(point.unwrap(), closest_obj.unwrap(), v, scene);
 }
 
 impl Scene {

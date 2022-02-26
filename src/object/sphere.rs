@@ -13,7 +13,7 @@ impl Sphere {
     fn intersect_coeff(&self, p: Point, v: Vector) -> (f64, f64, f64) {
         // taken from
         // http://ambrsoft.com/TrigoCalc/Sphere/SpherLineIntersection_.htm
-        let cp = (self.p - p).to_vec();
+        let cp = self.p - p;
 
         let a = v.powf(2f64).sum();
         let b = -2f64 * v.mul(cp).sum();

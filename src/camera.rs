@@ -15,7 +15,7 @@ pub struct Camera {
 impl Camera {
     pub fn new(center: Point, spotted_point: Point, up: Vector, alpha: f64) -> Camera {
         let up = up.normalize();
-        let forward = (spotted_point - center).to_vec().normalize();
+        let forward = (spotted_point - center).normalize();
         let right = up.cross_product(&forward);
 
         let perpendicular = up * forward;
