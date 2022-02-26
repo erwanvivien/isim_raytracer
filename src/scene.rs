@@ -1,16 +1,17 @@
 use crate::camera::Camera;
 use crate::color::Color;
 use crate::image::Image;
-use crate::light::Lighting;
-use crate::object::{Intersect, Normal};
+use crate::light::LightTrait;
+use crate::object::ObjectTrait;
+use crate::texture::TextureTrait;
 
-pub struct Scene<L: Lighting, O: Intersect + Normal> {
+pub struct Scene {
     pub cam: Camera,
-    pub lights: Vec<L>,
-    pub objects: Vec<O>,
+    pub lights: Vec<Box<dyn LightTrait>>,
+    pub objects: Vec<Box<dyn ObjectTrait>>,
 }
 
-impl<L: Lighting, O: Intersect + Normal> Scene<L, O> {
+impl Scene {
     pub fn image(&self, height: usize, width: usize) -> Image {
         let mut img = Image::new(height, width);
 
@@ -26,11 +27,23 @@ impl<L: Lighting, O: Intersect + Normal> Scene<L, O> {
             for j in (0..width).map(|j_usize| cam.alpha * (j_usize as f64 - width_half) / width_f) {
                 let v = v.rotate_around(&cam.up, j);
                 let mut color = Color::WHITE;
+                let mut distance = f64::MAX;
 
                 for obj in &self.objects {
-                    let intersect = obj.is_intersect(self.cam.center, v);
-                    if intersect {
-                        color = Color::BLACK
+                    let mut intersect = obj
+                        .intersect_points(self.cam.center, v)
+                        .into_iter()
+                        .map(|p| p.to_vec().mag())
+                        .collect::<Vec<_>>();
+                    intersect.sort_by_key(|&p| p as u128);
+
+                    if &intersect.len() > &0 {
+                        let d = *intersect.last().unwrap();
+
+                        if d < distance {
+                            color = (*obj.texture()).color();
+                            distance = d;
+                        }
                     }
                 }
 
