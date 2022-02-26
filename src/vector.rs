@@ -65,7 +65,7 @@ impl Vector {
     pub fn cross_product(&self, v: &Vector) -> Vector {
         Vector {
             x: self.y * v.z - self.z * v.y,
-            y: self.z * v.x - self.x * v.z,
+            y: -(self.z * v.x - self.x * v.z),
             z: self.x * v.y - self.y * v.x,
         }
     }
@@ -245,12 +245,13 @@ mod tests {
         assert_eq!(nm, Vector::normal_vec(&v2, &v1))
     }
 
+    #[test]
     fn cross_product() {
         let v1 = Vector::new(1f64, 3f64, 5f64);
         let v2 = Vector::new(2f64, 4f64, 5f64);
 
         let cross = v1.cross_product(&v2);
-        assert_eq!(cross, Vector::new(-5f64, -6f64, -2f64))
+        assert_eq!(cross, Vector::new(-5f64, -5f64, -2f64))
     }
 
     #[test]
