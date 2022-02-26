@@ -54,7 +54,9 @@ impl Image {
         for chunks in self.pixels.chunks(23) {
             let mut s = String::with_capacity(69);
             for c in chunks {
-                s.push_str(&*format!("{}{}{}", c.r, c.g, c.b))
+                s.push(char::from(c.r));
+                s.push(char::from(c.g));
+                s.push(char::from(c.b));
             }
 
             content.push_str(&*s);
@@ -114,17 +116,34 @@ mod tests {
         assert_eq!(image.pixels.capacity(), image.height * image.width)
     }
 
-    const CAMERA_CENTER: Point = Point::new(0f64, 0f64, 0f64);
-    const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
-    const UP: Vector = Vector::new(0f64, 1f64, 0f64);
+    fn check(img: &Image, path: &str) -> bool {
+        // let _ = img.save_png("images/test_80x80_v1.png");
+        let buffer = image::io::Reader::open(path).unwrap().decode().unwrap();
 
-    const OBJ1_POINT: Point = Point::new(5f64, 0f64, 0f64);
-    const OBJ2_POINT: Point = Point::new(5f64, 0f64, 3f64);
+        for (_nb, (x, y, color)) in buffer.pixels().enumerate() {
+            let x = x as usize;
+            let y = y as usize;
+            let pixel = img.pixels()[y * 80 + x];
 
-    const LIGHT_CENTER: Point = Point::new(0f64, 2f64, 0f64);
+            if [pixel.r, pixel.g, pixel.b, 255] != color.0 {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     #[test]
-    fn save() {
+    fn save_black_white() {
+        const CAMERA_CENTER: Point = Point::new(0f64, 0f64, 0f64);
+        const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
+        const UP: Vector = Vector::new(0f64, 1f64, 0f64);
+
+        const OBJ1_POINT: Point = Point::new(5f64, 0f64, 0f64);
+        const OBJ2_POINT: Point = Point::new(5f64, 0f64, 3f64);
+
+        const LIGHT_CENTER: Point = Point::new(0f64, 2f64, 0f64);
+
         let cam = Camera::new(
             CAMERA_CENTER,
             SPOTTED_POINT,
@@ -166,25 +185,69 @@ mod tests {
 
         let img = scene.image(80, 80);
 
-        // let _ = img.save_png("images/test_80x80_v1.png");
-        let buffer = image::io::Reader::open("images/80x80_v1.png")
-            .unwrap()
-            .decode()
-            .unwrap();
+        assert_eq!(true, check(&img, "images/80x80_v1_black_white.png"));
+    }
 
-        for (nb, (x, y, color)) in buffer.pixels().enumerate() {
-            let x = x as usize;
-            let y = y as usize;
-            let pixel = img.pixels()[y * 80 + x];
+    #[test]
+    fn save_color() {
+        const CAMERA_CENTER: Point = Point::new(0f64, 0f64, 0f64);
+        const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
+        const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 
-            assert_eq!(
-                [pixel.r, pixel.g, pixel.b, 255],
-                color.0,
-                "at position y:{}, x:{} at nb:{}",
-                y,
-                x,
-                nb
-            )
-        }
+        const OBJ1_POINT: Point = Point::new(5f64, 0f64, 0f64);
+        const OBJ2_POINT: Point = Point::new(5f64, 0f64, 3f64);
+
+        const LIGHT_CENTER: Point = Point::new(0f64, 2f64, 0f64);
+
+        let cam = Camera::new(
+            CAMERA_CENTER,
+            SPOTTED_POINT,
+            UP,
+            std::f64::consts::FRAC_PI_2,
+            std::f64::consts::FRAC_PI_2,
+        );
+
+        let obj1 = Sphere {
+            p: OBJ1_POINT,
+            r: 2f64,
+            texture: Box::new(UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 1f64,
+                color: Color {
+                    r: 66,
+                    g: 135,
+                    b: 245,
+                },
+            }),
+        };
+        let obj2 = Sphere {
+            p: OBJ2_POINT,
+            r: 1f64,
+            texture: Box::new(UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 1f64,
+
+                color: Color {
+                    r: 227,
+                    g: 66,
+                    b: 245,
+                },
+            }),
+        };
+
+        let light = PointLight {
+            point: LIGHT_CENTER,
+        };
+
+        let scene = Scene {
+            cam,
+            lights: vec![Box::new(light)],
+            objects: vec![Box::new(obj1), Box::new(obj2)],
+        };
+
+        let img = scene.image(80, 80);
+        assert_eq!(true, check(&img, "images/80x80_v2_color.png"));
     }
 }
