@@ -1,8 +1,7 @@
 use crate::object::{GetTexture, Intersect, Normal, ObjectTrait};
 use crate::point::Point;
-use crate::texture::{LightCoefficients, Texture, TextureTrait};
+use crate::texture::{LightCoefficients, TextureTrait};
 use crate::vector::Vector;
-use crate::Color;
 
 pub struct Sphere {
     pub p: Point,

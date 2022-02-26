@@ -3,7 +3,6 @@ use crate::color::Color;
 use crate::image::Image;
 use crate::light::LightTrait;
 use crate::object::ObjectTrait;
-use crate::texture::TextureTrait;
 
 pub struct Scene {
     pub cam: Camera,

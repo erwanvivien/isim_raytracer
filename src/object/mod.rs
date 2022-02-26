@@ -2,9 +2,8 @@
 pub mod sphere;
 
 use crate::point::Point;
-use crate::texture::{LightCoefficients, Texture, TextureTrait};
+use crate::texture::TextureTrait;
 use crate::vector::Vector;
-use crate::Color;
 
 /// Defines functions to asserts collision of ray to object
 pub trait Intersect {
