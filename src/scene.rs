@@ -11,7 +11,11 @@ pub struct Scene {
     pub objects: Vec<Box<dyn ObjectTrait>>,
 }
 
-fn cast_ray(v: Vector, scene: &Scene) -> Color {
+fn cast_ray_rebound(v: Vector, scene: &Scene) -> Color {
+    Color::BLACK
+}
+
+fn cast_ray_cam(v: Vector, scene: &Scene) -> Color {
     let mut color = Color::WHITE;
     let mut distance = f64::MAX;
 
@@ -44,17 +48,18 @@ impl Scene {
 
         let cam = &self.cam;
 
-        let height_f = height as f64;
-        let width_f = width as f64;
-        let height_half = height_f / 2f64;
-        let width_half = width_f / 2f64;
+        let height_half = (height / 2) as i64;
+        let width_half = (width / 2) as i64;
 
-        for i in (0..height).map(|i_usize| cam.beta * (i_usize as f64 - height_half) / height_f) {
+        let step_y = cam.beta / height as f64;
+        let step_x = cam.alpha / width as f64;
+
+        for i in (-height_half..height_half).map(|i| step_y * i as f64) {
             let v = cam.forward.rotate_around(&cam.right, i);
-            for j in (0..width).map(|j_usize| cam.alpha * (j_usize as f64 - width_half) / width_f) {
+            for j in (-width_half..width_half).map(|j| step_x * j as f64) {
                 let v = v.rotate_around(&cam.up, j);
 
-                let color = cast_ray(v, self);
+                let color = cast_ray_cam(v, self);
 
                 img.push(color);
             }

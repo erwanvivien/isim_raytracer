@@ -17,14 +17,14 @@ impl Camera {
     pub fn new(center: Point, spotted_point: Point, up: Vector, alpha: f64, beta: f64) -> Camera {
         let up = up.normalize();
         let forward = (spotted_point - center).to_vec().normalize();
-        let right = Vector::normal_vec(&up, &forward);
+        let right = up.cross_product(&forward);
 
         let perpendicular = up * forward;
         if up * forward != 0f64 {
-            return panic!(
+            panic!(
                 "Up & forward not perpendicular: up * forward = {}",
                 perpendicular
-            );
+            )
         }
 
         Camera {

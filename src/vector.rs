@@ -65,7 +65,7 @@ impl Vector {
     pub fn cross_product(&self, v: &Vector) -> Vector {
         Vector {
             x: self.y * v.z - self.z * v.y,
-            y: -(self.z * v.x - self.x * v.z),
+            y: self.z * v.x - self.x * v.z,
             z: self.x * v.y - self.y * v.x,
         }
     }
@@ -251,7 +251,7 @@ mod tests {
         let v2 = Vector::new(2f64, 4f64, 5f64);
 
         let cross = v1.cross_product(&v2);
-        assert_eq!(cross, Vector::new(-5f64, -5f64, -2f64))
+        assert_eq!(cross, Vector::new(-5f64, 5f64, -2f64))
     }
 
     #[test]
@@ -284,6 +284,68 @@ mod tests {
         let r = v2.rotate_around(&v1, std::f64::consts::PI);
 
         let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+
         assert_eq!(&*r, "(-1.00, 1.00, -1.00)")
+    }
+
+    macro_rules! triplet {
+        ($a:tt, $b:expr, $c:expr) => {
+            Vector::new(f64::from($a), f64::from($b), f64::from($c))
+        };
+    }
+
+    #[test]
+    fn rotate4() {
+        let v1 = Vector::new(1f64, 0.5f64, 0f64);
+        let v2 = Vector::new(-0.5f64, 1f64, 0f64);
+
+        let r = v1.rotate_around(&v2, std::f64::consts::PI / 4f64);
+
+        let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+        assert_eq!(&*r, "(0.71, 0.35, -0.79)")
+    }
+
+    #[test]
+    fn rotate5() {
+        let v1 = triplet!(16, 9, 16);
+        let v2 = triplet!(15, 6, 1);
+
+        let r = v1.rotate_around(&v2, std::f64::consts::PI / 4f64);
+
+        let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+        assert_eq!(&*r, "(20.31, -1.34, 13.36)")
+    }
+
+    #[test]
+    fn rotate6() {
+        let v1 = triplet!(10, 21, 5);
+        let v2 = triplet!(11, 1, 17);
+
+        let r = v1.rotate_around(&v2, std::f64::consts::PI / 4f64);
+
+        let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+        assert_eq!(&*r, "(-3.51, 19.01, 13.86)")
+    }
+
+    #[test]
+    fn rotate7() {
+        let v1 = triplet!(13, 15, 5);
+        let v2 = triplet!(8, 9, 15);
+
+        let r = v1.rotate_around(&v2, std::f64::consts::PI / 4f64);
+
+        let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+        assert_eq!(&*r, "(4.56, 18.54, 7.37)")
+    }
+
+    #[test]
+    fn rotate8() {
+        let v1 = triplet!(20, 12, 15);
+        let v2 = triplet!(4, 20, 9);
+
+        let r = v1.rotate_around(&v2, std::f64::consts::PI / 4f64);
+
+        let r = format!("({:.2}, {:.2}, {:.2})", r.x, r.y, r.z);
+        assert_eq!(&*r, "(21.30, 17.65, 1.86)")
     }
 }

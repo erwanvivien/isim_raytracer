@@ -18,8 +18,8 @@ mod texture;
 mod vector;
 
 const CAMERA_CENTER: Point = Point::new(0f64, 0f64, 0f64);
-const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
-const UP: Vector = Vector::new(0f64, 1f64, 0f64);
+const SPOTTED_POINT: Point = Point::new(1f64, 0.5f64, 0f64);
+const UP: Vector = Vector::new(-0.5f64, 1f64, 0f64);
 
 const OBJ1_POINT: Point = Point::new(5f64, 0f64, 0f64);
 const OBJ2_POINT: Point = Point::new(5f64, 0f64, 3f64);
