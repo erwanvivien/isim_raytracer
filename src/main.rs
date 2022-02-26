@@ -17,13 +17,13 @@ mod texture;
 mod vector;
 
 const CAMERA_CENTER: Point = Point::new(0f64, 0f64, 0f64);
-const SPOTTED_POINT: Point = Point::new(5f64, 0f64, 0f64);
+const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
 const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 
 const OBJ1_POINT: Point = Point::new(5f64, 0f64, 0f64);
 const OBJ2_POINT: Point = Point::new(5f64, 0f64, 3f64);
 
-const LIGHT_CENTER: Point = Point::new(0f64, 2f64, 2f64);
+const LIGHT_CENTER: Point = Point::new(0f64, 2f64, 0f64);
 
 fn main() {
     let cam = Camera::new(
@@ -63,5 +63,6 @@ fn main() {
         objects: vec![obj1, obj2],
     };
 
-    scene.image(800, 800);
+    let img = scene.image(800, 800);
+    let _ = img.save_png("test.png");
 }

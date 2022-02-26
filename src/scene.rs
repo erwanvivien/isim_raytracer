@@ -16,16 +16,15 @@ impl<L: Lighting, O: Intersect + Normal> Scene<L, O> {
 
         let cam = &self.cam;
 
-        let beta_half = cam.beta / 2f64;
-        let alpha_half = cam.alpha / 2f64;
+        let height_f = height as f64;
+        let width_f = width as f64;
+        let height_half = height_f / 2f64;
+        let width_half = width_f / 2f64;
 
-        for i in (0..height).map(|v| (v as f64) - beta_half) {
-            for j in (0..width).map(|v| (v as f64) - alpha_half) {
-                let v = cam
-                    .forward
-                    .rotate_around(&cam.up, i)
-                    .rotate_around(&cam.right, j);
-
+        for i in (0..height).map(|i_usize| cam.beta * (i_usize as f64 - height_half) / height_f) {
+            let v = cam.forward.rotate_around(&cam.right, i);
+            for j in (0..width).map(|j_usize| cam.alpha * (j_usize as f64 - width_half) / width_f) {
+                let v = v.rotate_around(&cam.up, j);
                 let mut color = Color::WHITE;
 
                 for obj in &self.objects {
