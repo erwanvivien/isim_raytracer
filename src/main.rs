@@ -24,7 +24,10 @@ const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 const OBJ1_POINT: Point = Point::new(5f64, 0f64, 0f64);
 const OBJ2_POINT: Point = Point::new(5f64, 0f64, 3f64);
 
-const LIGHT_CENTER: Point = Point::new(0f64, 2f64, 0f64);
+const OBJ1_COLOR: Color = Color::new(66, 135, 245);
+const OBJ2_COLOR: Color = Color::new(227, 66, 245);
+
+const LIGHT_CENTER: Point = Point::new(0f64, 2f64, -3f64);
 
 fn main() {
     let cam = Camera::new(
@@ -41,11 +44,7 @@ fn main() {
             kd: 1f64,
             ka: 1f64,
             ks: 1f64,
-            color: Color {
-                r: 66,
-                g: 135,
-                b: 245,
-            },
+            color: OBJ1_COLOR,
         }),
     };
     let obj2 = Sphere {
@@ -56,15 +55,12 @@ fn main() {
             ka: 1f64,
             ks: 1f64,
 
-            color: Color {
-                r: 227,
-                g: 66,
-                b: 245,
-            },
+            color: OBJ2_COLOR,
         }),
     };
 
     let light = PointLight {
+        intensity: Vector::new(1f64, 1f64, 1f64),
         point: LIGHT_CENTER,
     };
 
@@ -74,6 +70,6 @@ fn main() {
         objects: vec![Box::new(obj1), Box::new(obj2)],
     };
 
-    let img = scene.image(400, 600);
+    let img = scene.image(400 * 2, 600 * 2);
     let _ = img.save_png("test.png");
 }

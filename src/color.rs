@@ -1,5 +1,7 @@
 //! Color representation
 
+use crate::Vector;
+
 /// Color representation in rgb
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq, Copy, Clone)]
 pub struct Color {
@@ -11,6 +13,10 @@ pub struct Color {
 type ColorTuple = (u8, u8, u8);
 
 impl Color {
+    pub const fn new(r: u8, g: u8, b: u8) -> Color {
+        Color { r, g, b }
+    }
+
     pub const BLACK: Color = Color { r: 0, g: 0, b: 0 };
     pub const RED: Color = Color {
         r: 255,
@@ -30,6 +36,10 @@ impl Color {
         b: 255,
     };
 
+    pub const fn to_vec(&self) -> Vector {
+        Vector::new(self.r as f64, self.g as f64, self.b as f64)
+    }
+
     fn values(&self) -> ColorTuple {
         (self.r, self.g, self.b)
     }
@@ -48,6 +58,24 @@ impl Color {
 
     fn from_values(r: u8, g: u8, b: u8) -> Color {
         Color { r, g, b }
+    }
+}
+
+impl From<Vector> for Color {
+    fn from(v: Vector) -> Self {
+        let mut x = v.x;
+        let mut y = v.y;
+        let mut z = v.z;
+
+        let x = v.x.clamp(0f64, 255f64);
+        let y = v.y.clamp(0f64, 255f64);
+        let z = v.z.clamp(0f64, 255f64);
+
+        Color {
+            r: x as u8,
+            g: y as u8,
+            b: z as u8,
+        }
     }
 }
 
