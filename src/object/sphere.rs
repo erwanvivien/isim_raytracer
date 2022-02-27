@@ -53,7 +53,16 @@ impl Intersect for Sphere {
         let p1 = p + (v * t1);
         let p2 = p + (v * t2);
 
-        return vec![p1, p2];
+        let mut out = Vec::new();
+        if t1 > 0f64 {
+            out.push(p1);
+        }
+
+        if t2 > 0f64 {
+            out.push(p2);
+        }
+
+        return out;
     }
 }
 

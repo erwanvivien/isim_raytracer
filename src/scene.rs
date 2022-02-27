@@ -49,6 +49,7 @@ impl Scene {
         return img;
     }
 
+    #[allow(dead_code)]
     pub fn with_cam(&mut self, cam: Camera) -> &mut Self {
         self.cam = cam;
         self
@@ -59,25 +60,24 @@ impl Scene {
 
         for light in &self.lights {
             let l_vec = light.point() - p;
-            let l_dist = l_vec.mag();
-
-            let intersect = self.cast_ray(p, l_vec);
-
-            if intersect.is_some() {
-                let (_i_p, _i_obj, i_dist) = intersect.unwrap();
-
-                // if i_dist < l_dist {
-                //     dbg!(&obj.id());
-                //     dbg!(&p, &_i_p, &i_dist, &_i_obj.id());
-                //     dbg!("");
-                //     dbg!(&l_dist, &l_vec);
-                //     panic!();
-                // }
-
-                // if l_dist < i_dist {
-                //     return None;
-                // }
-            }
+            // let l_dist = l_vec.mag();
+            //
+            // let intersect = self.cast_ray(p, l_vec);
+            // if intersect.is_some() {
+            //     let (_i_p, _i_obj, i_dist) = intersect.unwrap();
+            //
+            //     if i_dist < l_dist {
+            //         dbg!(&obj.id());
+            //         dbg!(&p, &_i_p, &i_dist, &_i_obj.id());
+            //         dbg!("");
+            //         dbg!(&l_dist, &l_vec);
+            //         panic!();
+            //     }
+            //
+            //     if l_dist < i_dist {
+            //         return None;
+            //     }
+            // }
 
             let intensity = light.intensity();
 

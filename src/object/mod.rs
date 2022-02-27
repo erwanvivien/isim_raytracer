@@ -1,4 +1,5 @@
 //! Object representation
+pub mod plane;
 pub mod sphere;
 
 use crate::point::Point;
