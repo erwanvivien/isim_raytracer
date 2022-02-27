@@ -1,4 +1,4 @@
-use crate::object::{GetTexture, Intersect, Normal, ObjectTrait};
+use crate::object::{GetTexture, Intersect, Normal, ObjectId, ObjectTrait};
 use crate::point::Point;
 use crate::texture::{LightCoefficients, TextureTrait};
 use crate::vector::Vector;
@@ -7,6 +7,7 @@ pub struct Sphere {
     pub p: Point,
     pub r: f64,
     pub texture: Box<dyn TextureTrait>,
+    pub id: &'static str,
 }
 
 impl Sphere {
@@ -38,7 +39,7 @@ impl Intersect for Sphere {
             return Vec::new();
         }
 
-        if delta <= f64::MIN_POSITIVE {
+        if delta <= f64::EPSILON {
             let t = -b / (2f64 * a);
             let p = p + (v * t);
             return vec![p];
@@ -80,9 +81,15 @@ impl GetTexture for Sphere {
     }
 }
 
+impl ObjectId for Sphere {
+    fn id(&self) -> &'static str {
+        self.id
+    }
+}
+
 impl ObjectTrait for Sphere {}
 
-#[cfg(tests)]
+#[cfg(test)]
 mod tests {
     use crate::color::Color;
     use crate::object::sphere::Sphere;
@@ -104,6 +111,7 @@ mod tests {
             p: Point::new(4f64, 5f64, 6f64),
             r: 1f64,
             texture: Box::new(UNIFORM_TEXTURE),
+            id: "First",
         }
     }
 
@@ -212,6 +220,7 @@ mod tests {
             p: Point::new(5f64, 0f64, 5f64),
             r: 1f64,
             texture: Box::new(UNIFORM_TEXTURE),
+            id: "First",
         };
 
         let point = Point::new(0f64, 0f64, 0f64);

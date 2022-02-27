@@ -46,6 +46,7 @@ fn main() {
             ks: 1f64,
             color: OBJ1_COLOR,
         }),
+        id: "obj1",
     };
     let obj2 = Sphere {
         p: OBJ2_POINT,
@@ -57,6 +58,7 @@ fn main() {
 
             color: OBJ2_COLOR,
         }),
+        id: "obj2",
     };
 
     let light = PointLight {

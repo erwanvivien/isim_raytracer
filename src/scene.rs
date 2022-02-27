@@ -11,55 +11,6 @@ pub struct Scene {
     pub objects: Vec<Box<dyn ObjectTrait>>,
 }
 
-fn cast_ray_rebound(p: Point, obj: &Box<dyn ObjectTrait>, v: Vector, scene: &Scene) -> Color {
-    let normal = obj.normal(p);
-
-    for lights in &scene.lights {
-        let l_vec = lights.point() - p;
-        let intensity = lights.intensity();
-
-        let (kd, ks, ka) = obj.texture().coefficients(p);
-
-        let out = (obj.texture().color(p).to_vec()).mul(intensity) * kd * (normal * l_vec);
-
-        return out.into();
-    }
-
-    Color::BLACK
-}
-
-fn cast_ray_cam(v: Vector, scene: &Scene) -> Color {
-    let (mut closest_obj, mut point) = (None, None);
-    let mut distance = f64::MAX;
-
-    for obj in &scene.objects {
-        let intersect_points = obj.intersect_points(scene.cam.center, v);
-        if intersect_points.len() <= 0 {
-            continue;
-        }
-
-        let last = intersect_points.last().unwrap().clone();
-        let mut intersect = intersect_points
-            .into_iter()
-            .map(|p| p.mag())
-            .collect::<Vec<_>>();
-        intersect.sort_by_key(|&p| p as u128);
-
-        let d = *intersect.last().unwrap();
-        if d < distance {
-            distance = d;
-            closest_obj = Some(obj);
-            point = Some(last);
-        }
-    }
-
-    if closest_obj.is_none() {
-        return Color::BLACK;
-    }
-
-    return cast_ray_rebound(point.unwrap(), closest_obj.unwrap(), v, scene);
-}
-
 impl Scene {
     pub fn image(&self, height: usize, width: usize) -> Image {
         let mut img = Image::new(height, width);
@@ -79,12 +30,92 @@ impl Scene {
             for j in (-width_half..width_half).map(|j| step_x * j as f64) {
                 let v = v.rotate_around(&cam.up, j);
 
-                let color = cast_ray_cam(v, self);
+                let collision = self.cast_ray(cam.center, v);
+                if collision.is_none() {
+                    img.push(Color::BLACK);
+                    continue;
+                }
 
-                img.push(color);
+                let (p, obj, _) = collision.unwrap();
+                let color = self.cast_ray_rebound(p, obj, v);
+
+                match color {
+                    Some(c) => img.push(c),
+                    None => img.push(Color::BLACK),
+                }
             }
         }
 
         return img;
+    }
+
+    fn cast_ray_rebound(&self, p: Point, obj: &Box<dyn ObjectTrait>, _v: Vector) -> Option<Color> {
+        let normal = obj.normal(p);
+
+        for light in &self.lights {
+            let l_vec = light.point() - p;
+            let l_dist = l_vec.mag();
+
+            let intersect = self.cast_ray(p, l_vec);
+
+            if intersect.is_some() {
+                let (_i_p, _i_obj, i_dist) = intersect.unwrap();
+
+                // if i_dist < l_dist {
+                //     dbg!(&obj.id());
+                //     dbg!(&p, &i_p, &i_dist, &i_obj.id());
+                //     dbg!("");
+                //     dbg!(&l_dist, &l_vec);
+                //     panic!();
+                // }
+
+                if l_dist < i_dist {
+                    return None;
+                }
+            }
+
+            let intensity = light.intensity();
+
+            let (kd, _ks, _ka) = obj.texture().coefficients(p);
+            let out = (obj.texture().color(p).to_vec()).mul(intensity)
+                * kd
+                * (normal * l_vec.normalize());
+
+            return Some(out.into());
+        }
+
+        None
+    }
+
+    fn cast_ray(&self, p: Point, v: Vector) -> Option<(Point, &Box<dyn ObjectTrait>, f64)> {
+        let (mut closest_obj, mut point) = (None, None);
+        let mut distance = f64::MAX;
+
+        for obj in &self.objects {
+            let intersect_points = obj.intersect_points(p, v);
+            if intersect_points.len() <= 0 {
+                continue;
+            }
+
+            let intersect = intersect_points
+                .into_iter()
+                .map(|ip| (ip, (ip - p).mag()))
+                .filter(|&(_, distance)| distance > 0.000001f64)
+                .min_by(|(_, d1), (_, d2)| d1.partial_cmp(&d2).unwrap())
+                .unwrap();
+
+            // Avoid collision with self
+            if intersect.1 < distance {
+                distance = intersect.1;
+                closest_obj = Some(obj);
+                point = Some(intersect.0);
+            }
+        }
+
+        if closest_obj.is_none() {
+            return None;
+        }
+
+        return Some((point.unwrap(), closest_obj.unwrap(), distance));
     }
 }

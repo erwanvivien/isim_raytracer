@@ -5,6 +5,10 @@ use crate::point::Point;
 use crate::texture::TextureTrait;
 use crate::vector::Vector;
 
+pub trait ObjectId {
+    fn id(&self) -> &'static str;
+}
+
 /// Defines functions to asserts collision of ray to object
 pub trait Intersect {
     /// Returns true if `intersect_points` contains points
@@ -23,7 +27,7 @@ pub trait GetTexture {
 }
 
 /// SuperTrait for objects
-pub trait ObjectTrait: Intersect + Normal + GetTexture {}
+pub trait ObjectTrait: Intersect + Normal + GetTexture + ObjectId {}
 
 /// Object
 pub struct Object {}
@@ -45,6 +49,12 @@ impl Normal for Object {
 
 impl GetTexture for Object {
     fn texture(&self) -> &Box<dyn TextureTrait> {
+        unimplemented!()
+    }
+}
+
+impl ObjectId for Object {
+    fn id(&self) -> &'static str {
         unimplemented!()
     }
 }

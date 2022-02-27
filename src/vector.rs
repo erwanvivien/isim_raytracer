@@ -54,6 +54,7 @@ impl Vector {
         }
     }
 
+    #[allow(dead_code)]
     pub fn normal_vec(v1: &Vector, v2: &Vector) -> Vector {
         Vector {
             x: v1.y * v2.z - v2.y * v1.z,
@@ -162,7 +163,7 @@ impl Div<f64> for Vector {
     }
 }
 
-#[cfg(tests)]
+#[cfg(test)]
 mod tests {
     use crate::vector::Vector;
 
