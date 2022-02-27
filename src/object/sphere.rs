@@ -32,23 +32,25 @@ impl Intersect for Sphere {
     fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {
         let (a, b, c) = self.intersect_coeff(p, v);
 
-        if b.powf(2f64) - 4f64 * a * c < 0f64 {
+        let delta = b.powf(2f64) - 4f64 * a * c;
+
+        if delta < 0f64 {
             return Vec::new();
         }
 
-        if b.powf(2f64) - 4f64 * a * c == 0f64 {
+        if delta <= f64::MIN_POSITIVE {
             let t = -b / (2f64 * a);
-            let p = p + (v * t).to_point();
+            let p = p + (v * t);
             return vec![p];
         }
 
-        let t_sqrt = (b.powf(2f64) - 4f64 * a * c).sqrt();
+        let t_sqrt = delta.sqrt();
 
         let t1 = (-b + t_sqrt) / (2f64 * a);
         let t2 = (-b - t_sqrt) / (2f64 * a);
 
-        let p1 = p + (v * t1).to_point();
-        let p2 = p + (v * t2).to_point();
+        let p1 = p + (v * t1);
+        let p2 = p + (v * t2);
 
         return vec![p1, p2];
     }
