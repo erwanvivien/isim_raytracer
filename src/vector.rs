@@ -87,9 +87,9 @@ impl Vector {
 }
 
 impl Add<Vector> for Vector {
-    type Output = Vector;
-    fn add(self, rhs: Vector) -> Self::Output {
-        Vector {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
             x: self.x + rhs.x,
             z: self.z + rhs.z,
             y: self.y + rhs.y,
@@ -98,9 +98,9 @@ impl Add<Vector> for Vector {
 }
 
 impl Add<f64> for Vector {
-    type Output = Vector;
+    type Output = Self;
     fn add(self, rhs: f64) -> Self::Output {
-        Vector {
+        Self {
             x: self.x + rhs,
             z: self.z + rhs,
             y: self.y + rhs,
@@ -109,23 +109,23 @@ impl Add<f64> for Vector {
 }
 
 impl Sub<f64> for Vector {
-    type Output = Vector;
+    type Output = Self;
     fn sub(self, rhs: f64) -> Self::Output {
         self + (-rhs)
     }
 }
 
 impl Sub<Vector> for Vector {
-    type Output = Vector;
-    fn sub(self, rhs: Vector) -> Self::Output {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self::Output {
         self + (-rhs)
     }
 }
 
 impl Neg for Vector {
-    type Output = Vector;
+    type Output = Self;
     fn neg(self) -> Self::Output {
-        Vector {
+        Self {
             x: -self.x,
             z: -self.z,
             y: -self.y,
@@ -141,9 +141,9 @@ impl Mul for Vector {
 }
 
 impl Mul<f64> for Vector {
-    type Output = Vector;
+    type Output = Self;
     fn mul(self, rhs: f64) -> Self::Output {
-        Vector {
+        Self {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
@@ -152,9 +152,9 @@ impl Mul<f64> for Vector {
 }
 
 impl Div<f64> for Vector {
-    type Output = Vector;
+    type Output = Self;
     fn div(self, rhs: f64) -> Self::Output {
-        Vector {
+        Self {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,

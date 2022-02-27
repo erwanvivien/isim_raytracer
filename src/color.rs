@@ -12,6 +12,7 @@ pub struct Color {
 
 type ColorTuple = (u8, u8, u8);
 
+#[allow(dead_code)]
 impl Color {
     pub const fn new(r: u8, g: u8, b: u8) -> Color {
         Color { r, g, b }
@@ -63,10 +64,6 @@ impl Color {
 
 impl From<Vector> for Color {
     fn from(v: Vector) -> Self {
-        let mut x = v.x;
-        let mut y = v.y;
-        let mut z = v.z;
-
         let x = v.x.clamp(0f64, 255f64);
         let y = v.y.clamp(0f64, 255f64);
         let z = v.z.clamp(0f64, 255f64);
