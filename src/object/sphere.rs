@@ -82,6 +82,7 @@ impl GetTexture for Sphere {
 
 impl ObjectTrait for Sphere {}
 
+#[cfg(tests)]
 mod tests {
     use crate::color::Color;
     use crate::object::sphere::Sphere;

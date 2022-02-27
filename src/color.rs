@@ -79,6 +79,7 @@ impl From<Vector> for Color {
     }
 }
 
+#[cfg(tests)]
 mod tests {
     use crate::color::Color;
 

@@ -105,6 +105,7 @@ impl Image {
     }
 }
 
+#[cfg(tests)]
 mod tests {
     use crate::image::Image;
     use crate::{Camera, Color, Point, PointLight, Scene, Sphere, UniformTexture, Vector};

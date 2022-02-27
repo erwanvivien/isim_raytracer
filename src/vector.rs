@@ -162,6 +162,7 @@ impl Div<f64> for Vector {
     }
 }
 
+#[cfg(tests)]
 mod tests {
     use crate::vector::Vector;
 
