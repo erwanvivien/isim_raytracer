@@ -1,6 +1,6 @@
 use crate::camera::Camera;
 use crate::color::Color;
-use crate::image::Image;
+use crate::img::Image;
 use crate::light::LightTrait;
 use crate::object::ObjectTrait;
 use crate::{Point, Vector};
@@ -49,7 +49,12 @@ impl Scene {
         return img;
     }
 
-    fn cast_ray_rebound(&self, p: Point, obj: &Box<dyn ObjectTrait>, _v: Vector) -> Option<Color> {
+    pub fn with_cam(&mut self, cam: Camera) -> &mut Self {
+        self.cam = cam;
+        self
+    }
+
+    fn cast_ray_rebound(&self, p: Point, obj: &Box<dyn ObjectTrait>, v: Vector) -> Option<Color> {
         let normal = obj.normal(p);
 
         for light in &self.lights {
@@ -63,23 +68,28 @@ impl Scene {
 
                 // if i_dist < l_dist {
                 //     dbg!(&obj.id());
-                //     dbg!(&p, &i_p, &i_dist, &i_obj.id());
+                //     dbg!(&p, &_i_p, &i_dist, &_i_obj.id());
                 //     dbg!("");
                 //     dbg!(&l_dist, &l_vec);
                 //     panic!();
                 // }
 
-                if l_dist < i_dist {
-                    return None;
-                }
+                // if l_dist < i_dist {
+                //     return None;
+                // }
             }
 
             let intensity = light.intensity();
 
-            let (kd, _ks, _ka) = obj.texture().coefficients(p);
-            let out = (obj.texture().color(p).to_vec()).mul(intensity)
+            let (kd, ks, _ka) = obj.texture().coefficients(p);
+            let i_d = (obj.texture().color(p).to_vec()).mul(intensity)
                 * kd
                 * (normal * l_vec.normalize());
+
+            let reflect = v - normal * (v * normal) * 2f64;
+
+            let i_s = intensity * ks * (reflect * l_vec);
+            let out = i_d + i_s.powf(3f64);
 
             return Some(out.into());
         }
@@ -101,8 +111,11 @@ impl Scene {
                 .into_iter()
                 .map(|ip| (ip, (ip - p).mag()))
                 .filter(|&(_, distance)| distance > 0.000001f64)
-                .min_by(|(_, d1), (_, d2)| d1.partial_cmp(&d2).unwrap())
-                .unwrap();
+                .min_by(|(_, d1), (_, d2)| d1.partial_cmp(&d2).unwrap());
+            if intersect.is_none() {
+                continue;
+            }
+            let intersect = intersect.unwrap();
 
             // Avoid collision with self
             if intersect.1 < distance {

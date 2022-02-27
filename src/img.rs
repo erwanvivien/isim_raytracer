@@ -108,7 +108,7 @@ impl Image {
 
 #[cfg(test)]
 mod tests {
-    use crate::image::Image;
+    use crate::img::Image;
     use image::GenericImageView;
 
     #[test]

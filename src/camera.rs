@@ -19,10 +19,12 @@ impl Camera {
         let right = up.cross_product(&forward);
 
         let perpendicular = up * forward;
+        dbg!(&center);
+
         if up * forward != 0f64 {
             panic!(
-                "Up & forward not perpendicular: up * forward = {}",
-                perpendicular
+                "Up & forward not perpendicular: up * forward = {}\n{:?}\n{:?}",
+                perpendicular, &up, &forward
             )
         }
 
