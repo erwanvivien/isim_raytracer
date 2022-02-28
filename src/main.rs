@@ -18,40 +18,40 @@ mod scene;
 mod texture;
 mod vector;
 
-const CAMERA_CENTER: Point = Point::new(0f64, 0f64, 0f64);
+const CAMERA_CENTER: Point = Point::new(-5f64, 0f64, 0f64);
 const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
 const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 
-const OBJ1_POINT: Point = Point::new(5f64, 0f64, 0f64);
-const OBJ2_POINT: Point = Point::new(5f64, 0f64, 3f64);
+const OBJ1_POINT: Point = Point::new(10f64, 5f64, 0f64);
+const OBJ2_POINT: Point = Point::new(10f64, 0f64, 0f64);
 
-const OBJ1_COLOR: Color = Color::new(66, 135, 245);
-const OBJ2_COLOR: Color = Color::new(227, 66, 245);
-const PLA1_COLOR: Color = Color::new(212, 104, 104);
-
-const LIGHT_CENTER: Point = Point::new(0f64, 2f64, -3f64);
+const LIGHT_CENTER: Point = Point::new(-5f64, 5f64, 3f64);
 
 fn main() {
+    let obj1_color = Color::new(66, 135, 245);
+    let obj2_color = Color::new(227, 66, 245);
+    let pla1_color = Color::new(212, 104, 104);
+
     let obj1 = Sphere {
         p: OBJ1_POINT,
-        r: 2f64,
+        r: 1f64,
         texture: Box::new(UniformTexture {
             kd: 1f64,
             ka: 1f64,
-            ks: 1f64,
-            color: OBJ1_COLOR,
+            ks: 0.3f64,
+            color: obj1_color,
         }),
         id: "obj1",
     };
     let obj2 = Sphere {
         p: OBJ2_POINT,
-        r: 1f64,
+        r: 2f64,
         texture: Box::new(UniformTexture {
             kd: 1f64,
             ka: 1f64,
-            ks: 1f64,
+            ks: 0.4f64,
 
-            color: OBJ2_COLOR,
+            color: obj2_color,
         }),
         id: "obj2",
     };
@@ -63,9 +63,9 @@ fn main() {
         texture: Box::new(UniformTexture {
             kd: 1f64,
             ka: 0f64,
-            ks: 0f64,
+            ks: 0.1f64,
 
-            color: PLA1_COLOR,
+            color: pla1_color,
         }),
     };
 
@@ -78,7 +78,7 @@ fn main() {
         CAMERA_CENTER,
         SPOTTED_POINT,
         UP,
-        std::f64::consts::FRAC_PI_2 * 110f64 / 90f64,
+        std::f64::consts::FRAC_PI_2,
     );
 
     let scene = Scene {
