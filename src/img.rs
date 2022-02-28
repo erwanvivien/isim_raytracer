@@ -55,9 +55,10 @@ impl Image {
         for chunks in self.pixels.chunks(23) {
             let mut s = String::with_capacity(69);
             for c in chunks {
-                s.push(char::from(c.r));
-                s.push(char::from(c.g));
-                s.push(char::from(c.b));
+                let (r, g, b) = c.values();
+                s.push(char::from(r));
+                s.push(char::from(g));
+                s.push(char::from(b));
             }
 
             content.push_str(&*s);
@@ -90,7 +91,7 @@ impl Image {
         let tmp = &self
             .pixels
             .iter()
-            .map(|c| [c.r, c.g, c.b])
+            .map(|c| [c.r(), c.g(), c.b()])
             .flatten()
             .collect::<Vec<u8>>();
 

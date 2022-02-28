@@ -37,7 +37,7 @@ impl Scene {
                 }
 
                 let (p, obj, _) = collision.unwrap();
-                let color = self.cast_ray_rebound(p, obj, v);
+                let color = self.cast_ray_rebound(p, obj, v, 15);
 
                 match color {
                     Some(c) => img.push(c),
@@ -55,7 +55,17 @@ impl Scene {
         self
     }
 
-    fn cast_ray_rebound(&self, p: Point, obj: &Box<dyn ObjectTrait>, v: Vector) -> Option<Color> {
+    fn cast_ray_rebound(
+        &self,
+        p: Point,
+        obj: &Box<dyn ObjectTrait>,
+        v: Vector,
+        rec: usize,
+    ) -> Option<Color> {
+        if rec == 0 {
+            return Some(Color::BLACK);
+        }
+
         let normal = obj.normal(p);
 
         for light in &self.lights {
@@ -82,10 +92,23 @@ impl Scene {
             let i_s = intensity * ks * (reflect * l_vec.normalize()).powf(1f64);
             let out = i_d + i_s;
 
-            // dbg!(reflect * l_vec.normalize());
-            // dbg!(i_s);
-            // dbg!(i_d);
-            // panic!();
+            let rebound = self.cast_ray(p, reflect);
+            if rebound.is_none() {
+                return Some(out.into());
+            }
+
+            let (col_p, col_obj, col_distance) = rebound.unwrap();
+            let color = self.cast_ray_rebound(col_p, col_obj, reflect, rec - 1);
+
+            if let Some(c) = color {
+                let c = if col_distance >= 1f64 {
+                    c.to_vec() * (1f64 / col_distance)
+                } else {
+                    c.to_vec() / 1.2f64
+                };
+                let out = out + c;
+                return Some(out.into());
+            }
 
             return Some(out.into());
         }

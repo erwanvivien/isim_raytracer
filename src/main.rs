@@ -1,8 +1,11 @@
+use rand::{RngCore, SeedableRng};
+
 use crate::camera::Camera;
 use crate::color::Color;
 use crate::light::point::PointLight;
 use crate::object::plane::Plane;
 use crate::object::sphere::Sphere;
+use crate::object::ObjectTrait;
 use crate::point::Point;
 use crate::scene::Scene;
 use crate::texture::uniform::UniformTexture;
@@ -17,7 +20,8 @@ mod point;
 mod scene;
 mod texture;
 mod vector;
-const CAMERA_CENTER: Point = Point::new(-5f64, 0f64, 0f64);
+
+const CAMERA_CENTER: Point = Point::new(-15f64, 0f64, 0f64);
 const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
 const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 
@@ -37,7 +41,7 @@ fn main() {
         texture: Box::new(UniformTexture {
             kd: 1f64,
             ka: 1f64,
-            ks: 0.3f64,
+            ks: 0.4f64,
             color: obj1_color,
         }),
         id: "obj1",
@@ -80,13 +84,45 @@ fn main() {
         std::f64::consts::FRAC_PI_2,
     );
 
+    let mut objs: Vec<Box<dyn ObjectTrait>> =
+        vec![Box::new(obj1), Box::new(obj2), Box::new(plane1)];
+
+    let mut prng = rand::rngs::StdRng::seed_from_u64(3);
+    let mut next_float = || prng.next_u32() as f64 / u32::MAX as f64;
+    for i in 0..10 {
+        let sphere = Sphere {
+            p: Point {
+                x: 10f64,
+                y: next_float() * 10f64,
+                z: next_float() * 40f64 - 20f64,
+            },
+            r: next_float() * 2f64,
+            texture: Box::new(UniformTexture {
+                kd: 1f64,
+                ka: 1f64,
+                ks: 0.3f64,
+
+                color: Color {
+                    v: Vector {
+                        x: next_float() * 255f64,
+                        y: next_float() * 255f64,
+                        z: next_float() * 255f64,
+                    },
+                },
+            }),
+            id: "random",
+        };
+
+        objs.push(Box::new(sphere));
+    }
+
     let scene = Scene {
         cam,
         lights: vec![Box::new(light)],
-        objects: vec![Box::new(obj1), Box::new(obj2), Box::new(plane1)],
+        objects: objs,
     };
 
-    let img = scene.image(1080, 1920);
+    let img = scene.image(1080 * 3, 1920 * 3);
     img.save_png("output_0.png");
 
     // for i in (0..360).step_by(6) {

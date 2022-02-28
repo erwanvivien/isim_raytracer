@@ -85,6 +85,14 @@ impl Vector {
 
         return v1 + v2 + v3;
     }
+
+    pub fn clamp(&self, min: f64, max: f64) -> Vector {
+        Vector {
+            x: self.x.clamp(min, max),
+            y: self.y.clamp(min, max),
+            z: self.z.clamp(min, max),
+        }
+    }
 }
 
 impl Add<Vector> for Vector {
