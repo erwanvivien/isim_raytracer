@@ -73,14 +73,14 @@ impl Scene {
             let intensity = light.intensity();
 
             let (kd, ks, _ka) = obj.texture().coefficients(p);
-            let i_d = (obj.texture().color(p).to_vec()).mul(intensity)
+            let i_d = (obj.texture().color(p).to_vec()).mul(intensity.normalize())
                 * kd
                 * (normal * l_vec.normalize());
 
             let reflect = v - normal * (v * normal) * 2f64;
 
-            let i_s = intensity * ks * (reflect * l_vec);
-            let out = i_d + i_s.powf(3f64);
+            let i_s = intensity * ks * (reflect * l_vec.normalize()).powf(1f64);
+            let out = i_d + i_s;
 
             // dbg!(reflect * l_vec.normalize());
             // dbg!(i_s);

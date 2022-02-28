@@ -17,7 +17,6 @@ mod point;
 mod scene;
 mod texture;
 mod vector;
-
 const CAMERA_CENTER: Point = Point::new(-5f64, 0f64, 0f64);
 const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
 const UP: Vector = Vector::new(0f64, 1f64, 0f64);
@@ -70,7 +69,7 @@ fn main() {
     };
 
     let light = PointLight {
-        intensity: Vector::new(1f64, 1f64, 1f64),
+        intensity: Vector::new(255f64, 255f64, 255f64),
         point: LIGHT_CENTER,
     };
 
