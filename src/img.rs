@@ -127,7 +127,7 @@ mod tests {
             let y = y as usize;
             let pixel = img.pixels()[y * 80 + x];
 
-            if [pixel.r, pixel.g, pixel.b, 255] != color.0 {
+            if [pixel.r(), pixel.g(), pixel.b(), 255] != color.0 {
                 return false;
             }
         }

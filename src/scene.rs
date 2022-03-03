@@ -37,7 +37,7 @@ impl Scene {
                 }
 
                 let (p, obj, _) = collision.unwrap();
-                let color = self.cast_ray_rebound(p, obj, v, 15);
+                let color = self.cast_ray_rebound(p, obj, v, 5);
 
                 match color {
                     Some(c) => img.push(c),
@@ -68,52 +68,50 @@ impl Scene {
 
         let normal = obj.normal(p);
 
+        let mut current_color = Color::BLACK;
+
         for light in &self.lights {
             let l_vec = light.point() - p;
             let l_dist = l_vec.mag();
 
-            let intersect = self.cast_ray(p, l_vec);
-            if intersect.is_some() {
-                let (_i_p, _i_obj, i_dist) = intersect.unwrap();
-                if i_dist < l_dist {
-                    return None;
-                }
-            }
-
             let intensity = light.intensity();
 
             let (kd, ks, _ka) = obj.texture().coefficients(p);
-            let i_d = (obj.texture().color(p).to_vec()).mul(intensity.normalize())
+            let i_d = (obj.texture().color(p).v).mul(intensity.normalize())
                 * kd
                 * (normal * l_vec.normalize());
 
             let reflect = v - normal * (v * normal) * 2f64;
 
-            let i_s = intensity * ks * (reflect * l_vec.normalize()).powf(1f64);
+            let i_s = intensity * ks * (reflect * l_vec.normalize()).powf(50f64);
             let out = i_d + i_s;
+
+            let intersect = self.cast_ray(p, l_vec);
+            if let Some((_i_p, _i_obj, i_dist)) = intersect {
+                if i_dist < l_dist {
+                    // current_color.v = current_color.v + i_s;
+                    continue;
+                }
+            }
+
+            current_color.v = current_color.v + out;
 
             let rebound = self.cast_ray(p, reflect);
             if rebound.is_none() {
-                return Some(out.into());
+                continue;
             }
 
             let (col_p, col_obj, col_distance) = rebound.unwrap();
             let color = self.cast_ray_rebound(col_p, col_obj, reflect, rec - 1);
 
             if let Some(c) = color {
-                let c = if col_distance >= 1f64 {
-                    c.to_vec() * (1f64 / col_distance)
-                } else {
-                    c.to_vec() / 1.2f64
-                };
-                let out = out + c;
-                return Some(out.into());
+                let c = c.v / (col_distance + (16 - rec) as f64);
+                current_color.v = current_color.v + c;
             }
-
-            return Some(out.into());
         }
 
-        None
+        current_color.v = current_color.v.clamp(0f64, 255f64);
+        Some(current_color)
     }
 
     fn cast_ray(&self, p: Point, v: Vector) -> Option<(Point, &Box<dyn ObjectTrait>, f64)> {
