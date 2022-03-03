@@ -11,6 +11,8 @@ pub struct Scene {
     pub objects: Vec<Box<dyn ObjectTrait>>,
 }
 
+const MAX_REC: usize = 15;
+
 impl Scene {
     pub fn image(&self, height: usize, width: usize) -> Image {
         let mut img = Image::new(height, width);
@@ -37,7 +39,7 @@ impl Scene {
                 }
 
                 let (p, obj, _) = collision.unwrap();
-                let color = self.cast_ray_rebound(p, obj, v, 5);
+                let color = self.cast_ray_rebound(p, obj, v, 0);
 
                 match color {
                     Some(c) => img.push(c),
@@ -62,11 +64,13 @@ impl Scene {
         v: Vector,
         rec: usize,
     ) -> Option<Color> {
-        if rec == 0 {
+        if rec == MAX_REC {
             return Some(Color::BLACK);
         }
 
         let normal = obj.normal(p);
+        let reflect = v - normal * (v * normal) * 2f64;
+        let (kd, ks, _ka) = obj.texture().coefficients(p);
 
         let mut current_color = Color::BLACK;
 
@@ -76,12 +80,9 @@ impl Scene {
 
             let intensity = light.intensity();
 
-            let (kd, ks, _ka) = obj.texture().coefficients(p);
             let i_d = (obj.texture().color(p).v).mul(intensity.normalize())
                 * kd
                 * (normal * l_vec.normalize());
-
-            let reflect = v - normal * (v * normal) * 2f64;
 
             let i_s = intensity * ks * (reflect * l_vec.normalize()).powf(50f64);
             let out = i_d + i_s;
@@ -95,19 +96,19 @@ impl Scene {
             }
 
             current_color.v = current_color.v + out;
+        }
 
-            let rebound = self.cast_ray(p, reflect);
-            if rebound.is_none() {
-                continue;
-            }
+        let rebound = self.cast_ray(p, reflect);
+        if rebound.is_none() {
+            return Some(current_color);
+        }
 
-            let (col_p, col_obj, col_distance) = rebound.unwrap();
-            let color = self.cast_ray_rebound(col_p, col_obj, reflect, rec - 1);
+        let (col_p, col_obj, col_distance) = rebound.unwrap();
+        let color = self.cast_ray_rebound(col_p, col_obj, reflect, rec + 1);
 
-            if let Some(c) = color {
-                let c = c.v / (col_distance + (16 - rec) as f64);
-                current_color.v = current_color.v + c;
-            }
+        if let Some(c) = color {
+            let c = c.v / (col_distance + (1 + rec) as f64) * ks;
+            current_color.v = current_color.v + c;
         }
 
         current_color.v = current_color.v.clamp(0f64, 255f64);
