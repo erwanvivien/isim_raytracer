@@ -17,22 +17,23 @@ impl Scene {
     pub fn image(&self, height: usize, width: usize) -> Image {
         let mut img = Image::new(height, width);
 
-        let cam = &self.cam;
+        let gx = (self.cam.alpha / 2f64).tan();
+        let gy = gx * ((height - 1) as f64 / (width - 1) as f64);
 
-        let height_half = (height / 2) as i64;
-        let width_half = (width / 2) as i64;
+        let qx = self.cam.right * 2.0 * gx / ((width - 1) as f64);
+        let qy = self.cam.up * 2.0 * gy / ((height - 1) as f64);
 
-        let beta = cam.alpha * (height as f64 / width as f64);
+        let p_top_left = self.cam.center + self.cam.forward;
 
-        let step_y = beta / height as f64;
-        let step_x = cam.alpha / width as f64;
+        let height_half = (height / 2) as i32;
+        let width_half = (width / 2) as i32;
 
-        for i in (-height_half..height_half).map(|i| step_y * i as f64) {
-            let v = cam.forward.rotate_around(&cam.right, i);
-            for j in (-width_half..width_half).map(|j| step_x * j as f64) {
-                let v = v.rotate_around(&cam.up, j);
+        for i in (-height_half..height_half).map(|i| qy * i as f64) {
+            for j in (-width_half..width_half).map(|j| qx * j as f64) {
+                let p_pixel = p_top_left + j - i;
+                let v = (p_pixel - self.cam.center).normalize();
 
-                let collision = self.cast_ray(cam.center, v);
+                let collision = self.cast_ray(self.cam.center, v);
                 if collision.is_none() {
                     img.push(Color::BLACK);
                     continue;
