@@ -23,13 +23,11 @@ impl Scene {
         let qx = self.cam.right * 2.0 * gx / ((width - 1) as f64);
         let qy = self.cam.up * 2.0 * gy / ((height - 1) as f64);
 
-        let p_top_left = self.cam.center + self.cam.forward;
+        let p_top_left =
+            self.cam.center + self.cam.forward - self.cam.right * gx + self.cam.up * gy;
 
-        let height_half = (height / 2) as i32;
-        let width_half = (width / 2) as i32;
-
-        for i in (-height_half..height_half).map(|i| qy * i as f64) {
-            for j in (-width_half..width_half).map(|j| qx * j as f64) {
+        for i in (0..height).map(|i| qy * i as f64) {
+            for j in (0..width).map(|j| qx * j as f64) {
                 let p_pixel = p_top_left + j - i;
                 let v = (p_pixel - self.cam.center).normalize();
 
@@ -65,10 +63,6 @@ impl Scene {
         v: Vector,
         rec: usize,
     ) -> Option<Color> {
-        if rec == MAX_REC {
-            return Some(Color::BLACK);
-        }
-
         let normal = obj.normal(p);
         let reflect = v - normal * (v * normal) * 2f64;
         let (kd, ks, _ka) = obj.texture().coefficients(p);
@@ -85,7 +79,8 @@ impl Scene {
                 * kd
                 * (normal * l_vec.normalize());
 
-            let i_s = intensity * ks * (reflect * l_vec.normalize()).powf(50f64);
+            let rl = reflect * l_vec.normalize();
+            let i_s = intensity * (ks * rl.powf(50f64)).copysign(rl);
             let out = i_d + i_s;
 
             let intersect = self.cast_ray(p, l_vec);
@@ -97,6 +92,10 @@ impl Scene {
             }
 
             current_color.v = current_color.v + out;
+        }
+
+        if rec == MAX_REC {
+            return Some(current_color);
         }
 
         let rebound = self.cast_ray(p, reflect);
