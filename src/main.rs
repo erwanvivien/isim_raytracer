@@ -5,6 +5,7 @@ use crate::color::Color;
 use crate::light::point::PointLight;
 use crate::object::plane::Plane;
 use crate::object::sphere::Sphere;
+use crate::object::triangle::Triangle;
 use crate::object::ObjectTrait;
 use crate::point::Point;
 use crate::scene::Scene;
@@ -22,7 +23,7 @@ mod texture;
 mod vector;
 
 const CAMERA_CENTER: Point = Point::new(-15f64, 0f64, 0f64);
-const SPOTTED_POINT: Point = Point::new(1f64, 0f64, 0f64);
+const SPOTTED_POINT: Point = Point::new(0f64, 0f64, 0f64);
 const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 
 const OBJ1_POINT: Point = Point::new(10f64, 5f64, 0f64);
@@ -59,6 +60,19 @@ fn main() {
         id: "obj2",
     };
 
+    let triangle = Triangle::new(
+        Point::new(0f64, 0f64, -5f64),
+        Point::new(0f64, 0f64, 5f64),
+        Point::new(0f64, 10f64, 0f64),
+        Box::new(UniformTexture {
+            kd: 1f64,
+            ka: 1f64,
+            ks: 0.4f64,
+            color: Color::RED,
+        }),
+        "Triangle",
+    );
+
     let plane1 = Plane {
         normal: Vector::new(0f64, 1f64, 0f64),
         p: Point::new(0f64, -2f64, 0f64),
@@ -84,37 +98,41 @@ fn main() {
         std::f64::consts::FRAC_PI_2,
     );
 
-    let mut objs: Vec<Box<dyn ObjectTrait>> =
-        vec![Box::new(obj1), Box::new(obj2), Box::new(plane1)];
+    let mut objs: Vec<Box<dyn ObjectTrait>> = vec![
+        Box::new(obj1),
+        Box::new(obj2),
+        Box::new(plane1),
+        Box::new(triangle),
+    ];
 
     let mut prng = rand::rngs::StdRng::seed_from_u64(3);
     let mut next_float = || prng.next_u32() as f64 / u32::MAX as f64;
-    for i in 0..10 {
-        let sphere = Sphere {
-            p: Point {
-                x: 10f64,
-                y: next_float() * 10f64,
-                z: next_float() * 40f64 - 20f64,
-            },
-            r: next_float() * 2f64,
-            texture: Box::new(UniformTexture {
-                kd: 1f64,
-                ka: 1f64,
-                ks: 0.3f64,
-
-                color: Color {
-                    v: Vector {
-                        x: next_float() * 255f64,
-                        y: next_float() * 255f64,
-                        z: next_float() * 255f64,
-                    },
-                },
-            }),
-            id: "random",
-        };
-
-        objs.push(Box::new(sphere));
-    }
+    // for _ in 0..10 {
+    //     let sphere = Sphere {
+    //         p: Point {
+    //             x: 10f64,
+    //             y: next_float() * 10f64,
+    //             z: next_float() * 40f64 - 20f64,
+    //         },
+    //         r: next_float() * 2f64,
+    //         texture: Box::new(UniformTexture {
+    //             kd: 1f64,
+    //             ka: 1f64,
+    //             ks: 0.3f64,
+    //
+    //             color: Color {
+    //                 v: Vector {
+    //                     x: next_float() * 255f64,
+    //                     y: next_float() * 255f64,
+    //                     z: next_float() * 255f64,
+    //                 },
+    //             },
+    //         }),
+    //         id: "random",
+    //     };
+    //
+    //     objs.push(Box::new(sphere));
+    // }
 
     let scene = Scene {
         cam,
@@ -122,7 +140,7 @@ fn main() {
         objects: objs,
     };
 
-    let img = scene.image(1080 * 3, 1920 * 3);
+    let img = scene.image(1080, 1920);
     img.save_png("output_0.png");
 
     // for i in (0..360).step_by(6) {

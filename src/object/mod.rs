@@ -1,6 +1,7 @@
 //! Object representation
 pub mod plane;
 pub mod sphere;
+pub mod triangle;
 
 use crate::point::Point;
 use crate::texture::TextureTrait;

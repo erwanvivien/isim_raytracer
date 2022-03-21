@@ -11,7 +11,7 @@ pub struct Scene {
     pub objects: Vec<Box<dyn ObjectTrait>>,
 }
 
-const MAX_REC: usize = 3;
+const MAX_REC: usize = 5;
 
 impl Scene {
     pub fn image(&self, height: usize, width: usize) -> Image {
@@ -103,7 +103,7 @@ impl Scene {
             return Some(current_color);
         }
 
-        let (col_p, col_obj, col_distance) = rebound.unwrap();
+        let (col_p, col_obj, _) = rebound.unwrap();
         let color = self.cast_ray_rebound(col_p, col_obj, reflect, rec + 1);
 
         if let Some(c) = color {
