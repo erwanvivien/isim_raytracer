@@ -11,7 +11,7 @@ pub struct Scene {
     pub objects: Vec<Box<dyn ObjectTrait>>,
 }
 
-const MAX_REC: usize = 5;
+const MAX_REC: usize = 0;
 
 impl Scene {
     pub fn image(&self, height: usize, width: usize) -> Image {
@@ -26,10 +26,16 @@ impl Scene {
         let p_top_left =
             self.cam.center + self.cam.forward - self.cam.right * gx + self.cam.up * gy;
 
-        for i in (0..height).map(|i| qy * i as f64) {
-            for j in (0..width).map(|j| qx * j as f64) {
+        for (ii, i) in (0..height).map(|i| qy * i as f64).enumerate() {
+            for (jj, j) in (0..width).map(|j| qx * j as f64).enumerate() {
+                // if jj < 955 || jj > 965 || ii > 390 || ii < 370 {
+                //     img.push(Color::new(128, 128, 128));
+                //     continue;
+                // }
+
                 let p_pixel = p_top_left + j - i;
                 let v = (p_pixel - self.cam.center).normalize();
+                // dbg!((ii, jj));
 
                 let collision = self.cast_ray(self.cam.center, v);
                 if collision.is_none() {
@@ -86,6 +92,7 @@ impl Scene {
             let intersect = self.cast_ray(p, l_vec);
             if let Some((_i_p, _i_obj, i_dist)) = intersect {
                 if i_dist < l_dist {
+                    current_color.v = current_color.v + out;
                     // current_color.v = current_color.v + i_s;
                     continue;
                 }

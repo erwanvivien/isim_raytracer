@@ -1,3 +1,5 @@
+use image::math::Rect;
+use object::rect::Rectangle;
 use rand::{RngCore, SeedableRng};
 
 use crate::camera::Camera;
@@ -22,14 +24,16 @@ mod scene;
 mod texture;
 mod vector;
 
-const CAMERA_CENTER: Point = Point::new(-15f64, 0f64, 0f64);
-const SPOTTED_POINT: Point = Point::new(0f64, 0f64, 0f64);
+const OFFSET: f64 = 0f64;
+
+const CAMERA_CENTER: Point = Point::new(-3f64, -1f64, -5f64 + OFFSET);
+const SPOTTED_POINT: Point = Point::new(0f64, -1f64, 0f64 + OFFSET);
 const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 
 const OBJ1_POINT: Point = Point::new(10f64, 5f64, 0f64);
 const OBJ2_POINT: Point = Point::new(10f64, 0f64, 0f64);
 
-const LIGHT_CENTER: Point = Point::new(-5f64, 5f64, 3f64);
+const LIGHT_CENTER: Point = Point::new(-3f64, -1f64, -5f64 + OFFSET);
 
 fn main() {
     let obj1_color = Color::new(66, 135, 245);
@@ -86,6 +90,19 @@ fn main() {
         }),
     };
 
+    let rect = Rectangle::new(
+        Point::new(1f64, 1f64, 1f64 + OFFSET),
+        Point::new(0f64, 0f64, 0f64 + OFFSET),
+        Box::new(UniformTexture {
+            kd: 1f64,
+            ka: 0f64,
+            ks: 0.1f64,
+
+            color: Color::RED,
+        }),
+        "rect",
+    );
+
     let light = PointLight {
         intensity: Vector::new(255f64, 255f64, 255f64),
         point: LIGHT_CENTER,
@@ -99,14 +116,15 @@ fn main() {
     );
 
     let mut objs: Vec<Box<dyn ObjectTrait>> = vec![
-        Box::new(obj1),
-        Box::new(obj2),
-        Box::new(plane1),
-        Box::new(triangle),
+        // Box::new(obj1),
+        // Box::new(obj2),
+        // Box::new(plane1),
+        // Box::new(triangle),
+        Box::new(rect),
     ];
 
-    let mut prng = rand::rngs::StdRng::seed_from_u64(3);
-    let mut next_float = || prng.next_u32() as f64 / u32::MAX as f64;
+    // let mut prng = rand::rngs::StdRng::seed_from_u64(3);
+    // let mut next_float = || prng.next_u32() as f64 / u32::MAX as f64;
     // for _ in 0..10 {
     //     let sphere = Sphere {
     //         p: Point {

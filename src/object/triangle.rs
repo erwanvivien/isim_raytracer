@@ -125,12 +125,7 @@ mod tests {
             Point::new(0f64, 0f64, -5f64),
             Point::new(0f64, 0f64, 5f64),
             Point::new(0f64, 4f64, 0f64),
-            Box::new(UniformTexture {
-                kd: 1f64,
-                ka: 1f64,
-                ks: 0f64,
-                color: Color::WHITE,
-            }),
+            Box::new(UNIFORM_TEXTURE),
             "Triangle",
         )
     }
@@ -154,6 +149,5 @@ mod tests {
 
         let res = triangle.intersect_points(start, ray);
         assert_eq!(res.len(), 1);
-        assert_eq!(res.get(1).unwrap(), 3f64)
     }
 }

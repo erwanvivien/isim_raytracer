@@ -50,7 +50,7 @@ impl Intersect for Rectangle {
     }
 
     fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {
-        // // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
+        // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
 
         let invdir = 1f64 / v;
         let sign = [
@@ -60,71 +60,50 @@ impl Intersect for Rectangle {
         ];
 
         let aabb = [self.p_min, self.p_max];
+        let mut tmin = (aabb[sign[0]].x - p.x) * invdir.x;
+        let mut tmax = (aabb[1 - sign[0]].x - p.x) * invdir.x;
+        let tymin = (aabb[sign[1]].y - p.y) * invdir.y;
+        let tymax = (aabb[1 - sign[1]].y - p.y) * invdir.y;
 
-        let mut ray_min = (aabb[sign[0]].x - p.x) * invdir.x;
-        let mut ray_max = (aabb[1 - sign[0]].x - p.x) * invdir.x;
-
-        let y_min = (aabb[sign[1]].y - p.y) * invdir.y;
-        let y_max = (aabb[1 - sign[1]].y - p.y) * invdir.y;
-
-        if (ray_min > y_max) || (y_min > ray_max) {
+        if (tmin > tymax) || (tymin > tmax) {
             return Vec::new();
         }
-
-        if y_min > ray_min {
-            ray_min = y_min;
+        if tymin > tmin {
+            tmin = tymin;
+        }
+        if tymax < tmax {
+            tmax = tymax;
         }
 
-        if y_max < ray_max {
-            ray_max = y_max;
-        }
+        let tzmin = (aabb[sign[2]].z - p.z) * invdir.z;
+        let tzmax = (aabb[1 - sign[2]].z - p.z) * invdir.z;
 
-        let z_min = (aabb[sign[2]].z - p.z) * invdir.z;
-        let z_max = (aabb[1 - sign[2]].z - p.z) * invdir.z;
-
-        if (ray_min > z_max) || (z_min > ray_max) {
+        if (tmin > tzmax) || (tzmin > tmax) {
             return Vec::new();
         }
-
-        if z_max < ray_max {
-            ray_max = z_max;
+        if tzmin > tmin {
+            tmin = tzmin;
+        }
+        if tzmax < tmax {
+            tmax = tzmax;
         }
 
-        let min = p + v * ray_min;
-        let max = p + v * ray_max;
-
-        vec![min, max]
+        vec![p + v * tmin]
     }
 }
 
 impl Normal for Rectangle {
     fn normal(&self, p: Point) -> Vector {
-        const K_EPSILON: f64 = 0.0001;
-
-        // let pc = p - self.center;
-        //
-        // // step(edge,x) : x < edge ? 0 : 1
-        // let signum = pc.map(|x| x.signum());
-        //
-        // let pc_abs = pc.map(|x| x.abs());
-        // let pc_removed_size = pc_abs - self.size;
-        //
-        // let tmp = pc_removed_size.map(|x| (x.abs() <= K_EPSILON) as u8 as f64);
-        //
-        // let res = signum.mul(tmp);
-        // dbg!(&res);
-        // res
+        const K_EPSILON: f64 = 0.0000001f64;
 
         let pc = p - self.center;
 
         let signum = pc.map(|x| x.signum());
         let rel = pc.map(|x| x.abs()).div(self.size);
-        let res = (rel - 1f64).map(|x| (x.abs() < 0.0000001f64) as usize as f64);
+        let res = (rel - 1f64).map(|x| (x.abs() < K_EPSILON) as usize as f64);
 
         let res = res.mul(signum).normalize();
-        if res.x.abs() != 1f64 {
-            dbg!(&res);
-        }
+
         res
     }
 }
@@ -159,7 +138,7 @@ mod tests {
 
     fn rect() -> Rectangle {
         return Rectangle::new(
-            Point::new(1f64, 1f64, 1f64),
+            Point::new(0f64, 0f64, 0f64),
             Point::new(10f64, 10f64, 10f64),
             Box::new(UNIFORM_TEXTURE),
             "rect",

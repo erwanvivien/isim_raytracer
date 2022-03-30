@@ -54,6 +54,14 @@ impl Vector {
         }
     }
 
+    pub fn div(&self, v: Vector) -> Vector {
+        Vector {
+            x: self.x / v.x,
+            y: self.y / v.y,
+            z: self.z / v.z,
+        }
+    }
+
     #[allow(dead_code)]
     pub fn normal_vec(v1: &Vector, v2: &Vector) -> Vector {
         Vector {
@@ -92,6 +100,28 @@ impl Vector {
             y: self.y.clamp(min, max),
             z: self.z.clamp(min, max),
         }
+    }
+
+    pub fn map(&self, f: fn(f64) -> f64) -> Vector {
+        Vector {
+            x: f(self.x),
+            y: f(self.y),
+            z: f(self.z),
+        }
+    }
+
+    pub fn max(&self) -> f64 {
+        *[self.x, self.y, self.z]
+            .iter()
+            .max_by(|&x, &y| x.partial_cmp(y).unwrap())
+            .unwrap()
+    }
+
+    pub fn min(&self) -> f64 {
+        *[self.x, self.y, self.z]
+            .iter()
+            .min_by(|&x, &y| x.partial_cmp(y).unwrap())
+            .unwrap()
     }
 }
 
@@ -167,6 +197,30 @@ impl Div<f64> for Vector {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
+        }
+    }
+}
+
+impl Div<Vector> for f64 {
+    type Output = Vector;
+
+    fn div(self, rhs: Vector) -> Self::Output {
+        Vector {
+            x: self / rhs.x,
+            y: self / rhs.y,
+            z: self / rhs.z,
+        }
+    }
+}
+
+impl Div<Vector> for Vector {
+    type Output = Vector;
+
+    fn div(self, rhs: Vector) -> Self::Output {
+        Vector {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
+            z: self.z / rhs.z,
         }
     }
 }
