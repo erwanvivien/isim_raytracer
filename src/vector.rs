@@ -29,7 +29,7 @@ impl Vector {
     }
 
     #[allow(dead_code)]
-    pub fn to_point(&self) -> Point {
+    pub fn to_point(self) -> Point {
         Point {
             x: self.x,
             y: self.y,
@@ -94,7 +94,7 @@ impl Vector {
         let v2 = k.cross_product(self) * sin;
         let v3 = k * (k * *self) * (1f64 - cos);
 
-        return v1 + v2 + v3;
+        v1 + v2 + v3
     }
 
     pub fn clamp(&self, min: f64, max: f64) -> Vector {

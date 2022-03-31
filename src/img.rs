@@ -91,8 +91,7 @@ impl Image {
         let tmp = &self
             .pixels
             .iter()
-            .map(|c| [c.r(), c.g(), c.b()])
-            .flatten()
+            .flat_map(|c| [c.r(), c.g(), c.b()])
             .collect::<Vec<u8>>();
 
         image::save_buffer(

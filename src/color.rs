@@ -39,7 +39,7 @@ impl Color {
     pub const BLUE: Color = Color::new(0, 0, 255);
     pub const WHITE: Color = Color::new(255, 255, 255);
 
-    pub const fn to_vec(&self) -> Vector {
+    pub const fn to_vec(self) -> Vector {
         self.v
     }
 

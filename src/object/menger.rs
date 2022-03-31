@@ -7,7 +7,7 @@ use std::cell::RefCell;
 #[derive(Debug)]
 pub struct MengerRec {
     pub rect: RectangleInner,
-    pub sub_menger: Box<Vec<MengerRec>>,
+    pub sub_menger: Vec<MengerRec>,
     pub latest_hit: RefCell<Option<usize>>,
 }
 
@@ -15,7 +15,7 @@ impl MengerRec {
     pub fn new(rec_count: usize, p1: Point, p2: Point) -> MengerRec {
         if rec_count == 0 {
             return MengerRec {
-                sub_menger: Box::new(Vec::new()),
+                sub_menger: Vec::new(),
                 rect: RectangleInner::new(p1, p2),
                 latest_hit: RefCell::new(None),
             };
@@ -24,7 +24,7 @@ impl MengerRec {
         let diff = (p2 - p1) / 3f64;
 
         let sub = (0..27)
-            .map(|i| {
+            .filter_map(|i| {
                 let k = (i % 3) as f64;
                 let j = ((i % 9) / 3) as f64;
                 let i = (i / 9) as f64;
@@ -37,15 +37,13 @@ impl MengerRec {
 
                 Some(MengerRec::new(rec_count - 1, p_min, p_min + diff))
             })
-            .filter(|x| x.is_some())
-            .map(|x| x.unwrap())
             .collect::<Vec<_>>();
 
         assert_eq!(sub.len(), 20);
 
         MengerRec {
             rect: RectangleInner::new(p1, p2),
-            sub_menger: Box::new(sub),
+            sub_menger: sub,
             latest_hit: RefCell::new(None),
         }
     }
@@ -123,13 +121,11 @@ impl Intersect for MengerRec {
 
 impl Normal for MengerRec {
     fn normal(&self, p: Point) -> Vector {
-        let norm = if let Some(index) = self.latest_hit.take() {
+        if let Some(index) = self.latest_hit.take() {
             self.sub_menger[index].normal(p)
         } else {
             self.rect.normal(p)
-        };
-
-        norm
+        }
     }
 }
 
@@ -139,15 +135,13 @@ impl Intersect for Menger {
     }
 
     fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {
-        let rec = self.menger.intersect_points(p, v);
-        rec
+        self.menger.intersect_points(p, v)
     }
 }
 
 impl Normal for Menger {
     fn normal(&self, p: Point) -> Vector {
-        let normal = self.menger.normal(p);
-        normal
+        self.menger.normal(p)
     }
 }
 

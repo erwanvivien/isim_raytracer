@@ -62,7 +62,7 @@ impl Intersect for Sphere {
             out.push(p2);
         }
 
-        return out;
+        out
     }
 }
 

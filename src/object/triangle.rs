@@ -52,7 +52,7 @@ impl Triangle {
         let s = p - self.p1;
         let u = (s * h) * f;
 
-        if u < 0f64 || u > 1f64 {
+        if !(0f64..=1f64).contains(&u) {
             return (false, 01f64);
         }
 

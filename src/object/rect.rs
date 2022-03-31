@@ -113,10 +113,7 @@ impl Normal for RectangleInner {
         let signum = pc.map(|x| x.signum());
         let rel = pc.map(|x| x.abs()).div(self.size);
         let res = (rel - 1f64).map(|x| (x.abs() < K_EPSILON) as usize as f64);
-
-        let res = res.mul(signum).normalize();
-
-        res
+        res.mul(signum).normalize()
     }
 }
 

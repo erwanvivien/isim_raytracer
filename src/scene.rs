@@ -53,7 +53,7 @@ impl Scene {
             }
         }
 
-        return img;
+        img
     }
 
     #[allow(dead_code)]
@@ -128,7 +128,7 @@ impl Scene {
 
         for obj in &self.objects {
             let intersect_points = obj.intersect_points(p, v);
-            if intersect_points.len() <= 0 {
+            if intersect_points.is_empty() {
                 continue;
             }
 
@@ -136,7 +136,7 @@ impl Scene {
                 .into_iter()
                 .map(|ip| (ip, (ip - p).mag()))
                 .filter(|&(_, distance)| distance > 0.000001f64)
-                .min_by(|(_, d1), (_, d2)| d1.partial_cmp(&d2).unwrap());
+                .min_by(|(_, d1), (_, d2)| d1.partial_cmp(d2).unwrap());
             if intersect.is_none() {
                 continue;
             }
@@ -150,10 +150,8 @@ impl Scene {
             }
         }
 
-        if closest_obj.is_none() {
-            return None;
-        }
+        closest_obj?;
 
-        return Some((point.unwrap(), closest_obj.unwrap(), distance));
+        Some((point.unwrap(), closest_obj.unwrap(), distance))
     }
 }
