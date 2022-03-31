@@ -1,4 +1,5 @@
 //! Object representation
+pub mod menger;
 pub mod plane;
 pub mod rect;
 pub mod sphere;

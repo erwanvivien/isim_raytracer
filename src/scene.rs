@@ -26,10 +26,10 @@ impl Scene {
         let p_top_left =
             self.cam.center + self.cam.forward - self.cam.right * gx + self.cam.up * gy;
 
-        for (ii, i) in (0..height).map(|i| qy * i as f64).enumerate() {
-            for (jj, j) in (0..width).map(|j| qx * j as f64).enumerate() {
-                // if jj < 955 || jj > 965 || ii > 390 || ii < 370 {
-                //     img.push(Color::new(128, 128, 128));
+        for (_ii, i) in (0..height).map(|i| qy * i as f64).enumerate() {
+            for (_jj, j) in (0..width).map(|j| qx * j as f64).enumerate() {
+                // if ii != 120 || jj != 490 {
+                //     img.push(Color::GREEN);
                 //     continue;
                 // }
 

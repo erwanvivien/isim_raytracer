@@ -2,13 +2,29 @@ use crate::object::{GetTexture, Intersect, Normal, ObjectId, ObjectTrait};
 use crate::texture::TextureTrait;
 use crate::{Point, Vector};
 
-/// Object
-pub struct Rectangle {
+#[derive(Debug)]
+pub struct RectangleInner {
     pub p_min: Point,
     pub p_max: Point,
 
     pub center: Point,
     pub size: Vector,
+}
+
+impl RectangleInner {
+    pub fn new(p1: Point, p2: Point) -> RectangleInner {
+        RectangleInner {
+            p_min: p1,
+            p_max: p2,
+            center: (p1 + p2) / 2f64,
+            size: (p2 - p1).map(|x| x.abs()) * 0.5,
+        }
+    }
+}
+
+/// Object
+pub struct Rectangle {
+    pub rect: RectangleInner,
 
     pub texture: Box<dyn TextureTrait>,
     pub id: &'static str,
@@ -32,18 +48,14 @@ impl Rectangle {
         let p2 = Point::new(xs[1], ys[1], zs[1]);
 
         Rectangle {
-            p_min: p1,
-            p_max: p2,
-
+            rect: RectangleInner::new(p1, p2),
             texture,
             id,
-            center: (p1 + p2) / 2f64,
-            size: (p2 - p1).map(|x| x.abs()) * 0.5,
         }
     }
 }
 
-impl Intersect for Rectangle {
+impl Intersect for RectangleInner {
     fn is_intersect(&self, _p: Point, v: Vector) -> bool {
         const NULL_VEC: Vector = Vector::new(0f64, 0f64, 0f64);
         v != NULL_VEC // && ...
@@ -88,11 +100,11 @@ impl Intersect for Rectangle {
             tmax = tzmax;
         }
 
-        vec![p + v * tmin]
+        vec![p + v * tmin, p + v * tmax]
     }
 }
 
-impl Normal for Rectangle {
+impl Normal for RectangleInner {
     fn normal(&self, p: Point) -> Vector {
         const K_EPSILON: f64 = 0.0000001f64;
 
@@ -105,6 +117,22 @@ impl Normal for Rectangle {
         let res = res.mul(signum).normalize();
 
         res
+    }
+}
+
+impl Intersect for Rectangle {
+    fn is_intersect(&self, p: Point, v: Vector) -> bool {
+        self.rect.is_intersect(p, v)
+    }
+
+    fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {
+        self.rect.intersect_points(p, v)
+    }
+}
+
+impl Normal for Rectangle {
+    fn normal(&self, p: Point) -> Vector {
+        self.rect.normal(p)
     }
 }
 
