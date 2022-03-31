@@ -11,6 +11,9 @@ pub struct Vector {
 }
 
 impl Vector {
+    pub const ZERO: Vector = Vector::new(0f64, 0f64, 0f64);
+    pub const ONE: Vector = Vector::new(1f64, 1f64, 1f64);
+
     pub const fn new(x: f64, y: f64, z: f64) -> Vector {
         Vector { x, y, z }
     }
