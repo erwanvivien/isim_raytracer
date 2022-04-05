@@ -56,9 +56,9 @@ impl Rectangle {
 }
 
 impl Intersect for RectangleInner {
-    fn is_intersect(&self, _p: Point, v: Vector) -> bool {
+    fn is_intersect(&self, p: Point, v: Vector) -> bool {
         const NULL_VEC: Vector = Vector::new(0f64, 0f64, 0f64);
-        v != NULL_VEC // && ...
+        v != NULL_VEC && !self.intersect_points(p, v).is_empty()
     }
 
     fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {

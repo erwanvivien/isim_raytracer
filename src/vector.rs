@@ -1,5 +1,6 @@
 //! Vector3
 use crate::point::Point;
+use std::cmp::{max_by, min_by};
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// Vector3
@@ -125,6 +126,22 @@ impl Vector {
             .iter()
             .min_by(|&x, &y| x.partial_cmp(y).unwrap())
             .unwrap()
+    }
+
+    pub fn min_against(&self, v: &Vector) -> Vector {
+        Vector {
+            x: min_by(self.x, v.x, |a, b| a.partial_cmp(b).unwrap()),
+            y: min_by(self.y, v.y, |a, b| a.partial_cmp(b).unwrap()),
+            z: min_by(self.z, v.z, |a, b| a.partial_cmp(b).unwrap()),
+        }
+    }
+
+    pub fn max_against(&self, v: &Vector) -> Vector {
+        Vector {
+            x: max_by(self.x, v.x, |a, b| a.partial_cmp(b).unwrap()),
+            y: max_by(self.y, v.y, |a, b| a.partial_cmp(b).unwrap()),
+            z: max_by(self.z, v.z, |a, b| a.partial_cmp(b).unwrap()),
+        }
     }
 }
 

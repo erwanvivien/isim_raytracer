@@ -1,12 +1,14 @@
 pub mod grammar;
 pub mod state;
 
+use crate::object::rect::{Rectangle, RectangleInner};
 use crate::object::turtle::grammar::parse_grammar;
 use crate::object::turtle::state::State;
 use crate::object::{GetTexture, Intersect, Normal, ObjectId, ObjectTrait};
 use crate::texture::TextureTrait;
 use crate::{Color, Point, UniformTexture, Vector};
 use std::cell::RefCell;
+use std::cmp::min;
 
 use crate::object::sphere::Sphere;
 
@@ -16,11 +18,17 @@ pub struct Turtle {
     pub texture: Box<dyn TextureTrait>,
     pub id: &'static str,
 
+    pub rect: RectangleInner,
+
     pub latest_hit: RefCell<Option<usize>>,
 }
 
 impl Turtle {
-    fn generate(s: String, angle: f64) -> Vec<Box<dyn ObjectTrait>> {
+    fn generate(
+        s: String,
+        angle: f64,
+        color: Color,
+    ) -> (Vec<Box<dyn ObjectTrait>>, Vector, Vector) {
         let mut res = Vec::<Box<dyn ObjectTrait>>::new();
         let mut states = Vec::new();
 
@@ -31,33 +39,38 @@ impl Turtle {
             left: Vector::new(0f64, 0f64, 1f64),
         };
 
-        for c in s.chars() {
-            let last = &mut current;
+        let mut min = Vector::ZERO;
+        let mut max = Vector::ZERO;
+        const RADIUS: f64 = 0.2f64;
 
+        for c in s.chars() {
             match c {
                 'F' => {
-                    last.move_forward(0.4f64);
+                    current.move_forward(0.4f64);
                     res.push(Box::new(Sphere {
-                        p: last.position,
+                        p: current.position,
                         id: "turtle",
-                        r: 0.2f64,
+                        r: RADIUS,
                         texture: Box::new(UniformTexture {
                             kd: 1f64,
                             ka: 0f64,
                             ks: 0.1f64,
 
-                            color: Color::WHITE,
+                            color,
                         }),
-                    }))
+                    }));
+
+                    min = min.min_against(&(current.position - RADIUS));
+                    max = max.max_against(&(current.position + RADIUS));
                 }
-                '+' => last.rotate_up(angle),
-                '-' => last.rotate_up(-angle),
-                '&' => last.rotate_left(angle),
-                '^' => last.rotate_left(-angle),
-                '/' => last.rotate_head(angle),
-                '\\' => last.rotate_head(-angle),
-                '|' => last.rotate_head(180f64),
-                '[' => states.push(last.clone()),
+                '+' => current.rotate_up(angle),
+                '-' => current.rotate_up(-angle),
+                '&' => current.rotate_left(angle),
+                '^' => current.rotate_left(-angle),
+                '/' => current.rotate_head(angle),
+                '\\' => current.rotate_head(-angle),
+                '|' => current.rotate_head(180f64),
+                '[' => states.push(current.clone()),
                 ']' => {
                     current = states.pop().unwrap();
                 }
@@ -65,19 +78,22 @@ impl Turtle {
             };
         }
 
-        res
+        dbg!((min, max));
+
+        (res, min, max)
     }
 
     pub fn new(path: String, texture: Box<dyn TextureTrait>, id: &'static str) -> Turtle {
         let g = parse_grammar(path).unwrap();
         let s = g.expand();
 
-        let objects = Turtle::generate(s, g.angle);
+        let (objects, min, max) = Turtle::generate(s, g.angle, Color::GREEN);
 
         Turtle {
             objects,
             id,
             texture,
+            rect: RectangleInner::new(min, max),
             latest_hit: RefCell::new(None),
         }
     }
@@ -89,6 +105,10 @@ impl Intersect for Turtle {
     }
 
     fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {
+        if !self.rect.is_intersect(p, v) {
+            return Vec::new();
+        }
+
         let mut best_dist = f64::MAX;
         let mut best_inter = Vec::new();
 
