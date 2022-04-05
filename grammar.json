@@ -1,0 +1,9 @@
+{
+  "angle": 20,
+  "steps": 5,
+  "axiom": "X",
+  "rules": {
+    "X": "F[+X]F[-X]+X",
+    "F": "FF"
+  }
+}

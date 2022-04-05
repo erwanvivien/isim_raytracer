@@ -2,6 +2,7 @@ use crate::camera::Camera;
 use crate::color::Color;
 use crate::light::point::PointLight;
 use crate::object::menger::Menger;
+use crate::object::turtle::Turtle;
 use crate::object::ObjectTrait;
 use crate::point::Point;
 use crate::scene::Scene;
@@ -20,11 +21,11 @@ mod vector;
 
 const OFFSET: f64 = 0f64;
 
-const CAMERA_CENTER: Point = Point::new(-3f64, 2f64, -5f64 + OFFSET);
-const SPOTTED_POINT: Point = Point::new(0f64, 2f64, 0f64 + OFFSET);
-const UP: Vector = Vector::new(0f64, 1f64, 0f64);
+const CAMERA_CENTER: Point = Point::new(0f64 + 12f64, 25f64, 0f64 + OFFSET);
+const SPOTTED_POINT: Point = Point::new(0f64 + 12f64, 0f64, 0f64 + OFFSET);
+const UP: Vector = Vector::new(1f64, 0f64, 0f64);
 
-const LIGHT_CENTER: Point = Point::new(-3f64, 2f64, -5f64 + OFFSET);
+const LIGHT_CENTER: Point = Point::new(0f64, 10f64, 0f64 + OFFSET);
 
 fn main() {
     let menger = Menger::new(
@@ -53,7 +54,19 @@ fn main() {
         std::f64::consts::FRAC_PI_2,
     );
 
-    let objs: Vec<Box<dyn ObjectTrait>> = vec![Box::new(menger)];
+    let turtle = Turtle::new(
+        String::from("./grammar.json"),
+        Box::new(UniformTexture {
+            kd: 1f64,
+            ka: 0f64,
+            ks: 0.1f64,
+
+            color: Color::WHITE,
+        }),
+        "turtle",
+    );
+
+    let objs: Vec<Box<dyn ObjectTrait>> = vec![Box::new(turtle)];
 
     let scene = Scene {
         cam,

@@ -4,6 +4,7 @@ pub mod plane;
 pub mod rect;
 pub mod sphere;
 pub mod triangle;
+pub mod turtle;
 
 use crate::point::Point;
 use crate::texture::TextureTrait;
