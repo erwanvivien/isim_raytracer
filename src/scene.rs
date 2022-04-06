@@ -26,13 +26,12 @@ impl Scene {
         let p_top_left =
             self.cam.center + self.cam.forward - self.cam.right * gx + self.cam.up * gy;
 
+        let size = height;
         for (_ii, i) in (0..height).map(|i| qy * i as f64).enumerate() {
-            for (_jj, j) in (0..width).map(|j| qx * j as f64).enumerate() {
-                // if ii != 120 || jj != 490 {
-                //     img.push(Color::GREEN);
-                //     continue;
-                // }
+            print!("{:.2}%\r", (_ii * 100) as f64 / (size as f64));
+            std::io::stdout().flush().unwrap();
 
+            for (_jj, j) in (0..width).map(|j| qx * j as f64).enumerate() {
                 let p_pixel = p_top_left + j - i;
                 let v = (p_pixel - self.cam.center).normalize();
                 // dbg!((ii, jj));
@@ -52,6 +51,7 @@ impl Scene {
                 }
             }
         }
+        println!();
 
         img
     }

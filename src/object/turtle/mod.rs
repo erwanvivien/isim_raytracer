@@ -1,16 +1,16 @@
 pub mod grammar;
 pub mod state;
 
-use crate::object::rect::{Rectangle, RectangleInner};
+use crate::object::rect::RectangleInner;
 use crate::object::turtle::grammar::parse_grammar;
 use crate::object::turtle::state::State;
 use crate::object::{GetTexture, Intersect, Normal, ObjectId, ObjectTrait};
 use crate::texture::TextureTrait;
 use crate::{Color, Point, UniformTexture, Vector};
 use std::cell::RefCell;
-use std::cmp::min;
 
 use crate::object::sphere::Sphere;
+use crate::object::triangle::Triangle;
 
 /// Object
 pub struct Turtle {
@@ -31,12 +31,14 @@ impl Turtle {
     ) -> (Vec<Box<dyn ObjectTrait>>, Vector, Vector) {
         let mut res = Vec::<Box<dyn ObjectTrait>>::new();
         let mut states = Vec::new();
+        let mut polygon_edges = Vec::new();
 
         let mut current = State {
             position: Vector::ZERO,
             head: Vector::new(1f64, 0f64, 0f64),
             up: Vector::new(0f64, 1f64, 0f64),
             left: Vector::new(0f64, 0f64, 1f64),
+            color_index: 0,
         };
 
         let mut min = Vector::ZERO;
@@ -45,6 +47,7 @@ impl Turtle {
 
         for c in s.chars() {
             match c {
+                // Forward
                 'F' => {
                     current.move_forward(0.4f64);
                     res.push(Box::new(Sphere {
@@ -63,17 +66,61 @@ impl Turtle {
                     min = min.min_against(&(current.position - RADIUS));
                     max = max.max_against(&(current.position + RADIUS));
                 }
+                // Turn left
                 '+' => current.rotate_up(angle),
+                // Turn right
                 '-' => current.rotate_up(-angle),
+                // Turn up
                 '&' => current.rotate_left(angle),
+                // Turn down
                 '^' => current.rotate_left(-angle),
+                // Rotate clockwise
                 '/' => current.rotate_head(angle),
+                // Rotate anti-clockwise
                 '\\' => current.rotate_head(-angle),
+                // U-Turn
                 '|' => current.rotate_head(180f64),
-                '[' => states.push(current.clone()),
-                ']' => {
-                    current = states.pop().unwrap();
+                // Place polygon egde
+                'f' => {
+                    min = min.min_against(&current.position);
+                    max = max.max_against(&current.position);
+
+                    polygon_edges.push(current.position.clone());
+                    current.move_forward(0.4f64);
                 }
+                // Decrement diameter
+                '!' => {}
+                // Increment index color table
+                '\'' => {}
+                // Starts a polygon
+                '{' => polygon_edges.clear(),
+                // Closes a polygon
+                '}' => {
+                    polygon_edges.push(current.position.clone());
+
+                    let start = polygon_edges[0];
+                    for win in polygon_edges.windows(2).skip(1) {
+                        let (first, second) = (win[0], win[1]);
+                        let triangle = Triangle::new(
+                            start,
+                            first,
+                            second,
+                            Box::new(UniformTexture {
+                                kd: 1f64,
+                                ks: 0.2f64,
+                                ka: 0f64,
+                                color: Color::GREEN,
+                            }),
+                            "Triangle",
+                        );
+
+                        res.push(Box::new(triangle));
+                    }
+                }
+                // Saves states
+                '[' => states.push(current.clone()),
+                // Restores state
+                ']' => current = states.pop().unwrap(),
                 _ => {}
             };
         }

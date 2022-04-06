@@ -1,4 +1,3 @@
-use crate::object::sphere::Sphere;
 use crate::Vector;
 
 #[derive(Clone)]
@@ -7,6 +6,7 @@ pub struct State {
     pub head: Vector,
     pub up: Vector,
     pub left: Vector,
+    pub color_index: usize,
 }
 
 impl State {

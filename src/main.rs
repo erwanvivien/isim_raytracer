@@ -21,8 +21,8 @@ mod vector;
 
 const OFFSET: f64 = 0f64;
 
-const CAMERA_CENTER: Point = Point::new(0f64 + 12f64, 25f64, 0f64 + OFFSET);
-const SPOTTED_POINT: Point = Point::new(0f64 + 12f64, 0f64, 0f64 + OFFSET);
+const CAMERA_CENTER: Point = Point::new(0f64 + 7f64, 20f64, 0f64 + OFFSET);
+const SPOTTED_POINT: Point = Point::new(0f64 + 7f64, 0f64, 0f64 + OFFSET);
 const UP: Vector = Vector::new(1f64, 0f64, 0f64);
 
 const LIGHT_CENTER: Point = Point::new(0f64, 10f64, 0f64 + OFFSET);
@@ -74,6 +74,6 @@ fn main() {
         objects: objs,
     };
 
-    let img = scene.image(1080, 1920);
+    let img = scene.image(1080 / 2, 1920 / 2);
     img.save_png("output_0.png");
 }
