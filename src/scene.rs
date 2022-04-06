@@ -4,6 +4,7 @@ use crate::img::Image;
 use crate::light::LightTrait;
 use crate::object::ObjectTrait;
 use crate::{Point, Vector};
+use std::io::Write;
 
 pub struct Scene {
     pub cam: Camera,

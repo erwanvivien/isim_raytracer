@@ -7,7 +7,7 @@ pub struct Sphere {
     pub p: Point,
     pub r: f64,
     pub texture: Box<dyn TextureTrait>,
-    pub id: &'static str,
+    pub id: String,
 }
 
 impl Sphere {
@@ -91,8 +91,8 @@ impl GetTexture for Sphere {
 }
 
 impl ObjectId for Sphere {
-    fn id(&self) -> &'static str {
-        self.id
+    fn id(&self) -> &String {
+        &self.id
     }
 }
 
@@ -120,7 +120,7 @@ mod tests {
             p: Point::new(4f64, 5f64, 6f64),
             r: 1f64,
             texture: Box::new(UNIFORM_TEXTURE),
-            id: "First",
+            id: String::from("First"),
         }
     }
 

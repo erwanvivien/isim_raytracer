@@ -14,7 +14,7 @@ pub struct Triangle {
     pub normal: Vector,
 
     pub texture: Box<dyn TextureTrait>,
-    pub id: &'static str,
+    pub id: String,
 }
 
 impl Triangle {
@@ -23,7 +23,7 @@ impl Triangle {
         p2: Point,
         p3: Point,
         texture: Box<dyn TextureTrait>,
-        id: &'static str,
+        id: String,
     ) -> Triangle {
         let edge1 = p2 - p1;
         let edge2 = p3 - p1;
@@ -100,8 +100,8 @@ impl GetTexture for Triangle {
 }
 
 impl ObjectId for Triangle {
-    fn id(&self) -> &'static str {
-        self.id
+    fn id(&self) -> &String {
+        &self.id
     }
 }
 
@@ -109,6 +109,7 @@ impl ObjectTrait for Triangle {}
 
 #[cfg(test)]
 mod tests {
+    use crate::object::triangle::Triangle;
     use crate::object::Intersect;
     use crate::{Color, Point, Triangle, UniformTexture, Vector};
 
@@ -126,7 +127,7 @@ mod tests {
             Point::new(0f64, 0f64, 5f64),
             Point::new(0f64, 4f64, 0f64),
             Box::new(UNIFORM_TEXTURE),
-            "Triangle",
+            String::from("Triangle"),
         )
     }
 

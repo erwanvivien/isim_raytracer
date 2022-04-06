@@ -27,16 +27,11 @@ pub struct Rectangle {
     pub rect: RectangleInner,
 
     pub texture: Box<dyn TextureTrait>,
-    pub id: &'static str,
+    pub id: String,
 }
 
 impl Rectangle {
-    pub fn new(
-        p1: Point,
-        p2: Point,
-        texture: Box<dyn TextureTrait>,
-        id: &'static str,
-    ) -> Rectangle {
+    pub fn new(p1: Point, p2: Point, texture: Box<dyn TextureTrait>, id: String) -> Rectangle {
         let mut xs = [p1.x, p2.x];
         let mut ys = [p1.y, p2.y];
         let mut zs = [p1.z, p2.z];
@@ -140,8 +135,8 @@ impl GetTexture for Rectangle {
 }
 
 impl ObjectId for Rectangle {
-    fn id(&self) -> &'static str {
-        self.id
+    fn id(&self) -> &String {
+        &self.id
     }
 }
 
@@ -166,7 +161,7 @@ mod tests {
             Point::new(0f64, 0f64, 0f64),
             Point::new(10f64, 10f64, 10f64),
             Box::new(UNIFORM_TEXTURE),
-            "rect",
+            String::from("rect"),
         );
     }
 

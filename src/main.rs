@@ -39,7 +39,7 @@ fn main() {
 
             color: Color::WHITE,
         }),
-        "rect",
+        String::from("rect"),
     );
 
     let light = PointLight {
@@ -63,7 +63,7 @@ fn main() {
 
             color: Color::WHITE,
         }),
-        "turtle",
+        String::from("turtle"),
     );
 
     let objs: Vec<Box<dyn ObjectTrait>> = vec![Box::new(turtle)];

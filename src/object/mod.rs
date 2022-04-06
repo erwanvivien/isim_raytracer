@@ -11,7 +11,7 @@ use crate::texture::TextureTrait;
 use crate::vector::Vector;
 
 pub trait ObjectId {
-    fn id(&self) -> &'static str;
+    fn id(&self) -> &String;
 }
 
 /// Defines functions to asserts collision of ray to object
@@ -59,7 +59,7 @@ impl GetTexture for Object {
 }
 
 impl ObjectId for Object {
-    fn id(&self) -> &'static str {
+    fn id(&self) -> &String {
         unimplemented!()
     }
 }

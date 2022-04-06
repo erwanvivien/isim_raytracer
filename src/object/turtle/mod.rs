@@ -16,7 +16,7 @@ use crate::object::triangle::Triangle;
 pub struct Turtle {
     pub objects: Vec<Box<dyn ObjectTrait>>,
     pub texture: Box<dyn TextureTrait>,
-    pub id: &'static str,
+    pub id: String,
 
     pub rect: RectangleInner,
 
@@ -52,7 +52,7 @@ impl Turtle {
                     current.move_forward(0.4f64);
                     res.push(Box::new(Sphere {
                         p: current.position,
-                        id: "turtle",
+                        id: format!("Turtle {}", res.len()),
                         r: RADIUS,
                         texture: Box::new(UniformTexture {
                             kd: 1f64,
@@ -111,7 +111,7 @@ impl Turtle {
                                 ka: 0f64,
                                 color: Color::GREEN,
                             }),
-                            "Triangle",
+                            format!("Triangle {}", polygon_edges.len()),
                         );
 
                         res.push(Box::new(triangle));
@@ -125,12 +125,10 @@ impl Turtle {
             };
         }
 
-        dbg!((min, max));
-
         (res, min, max)
     }
 
-    pub fn new(path: String, texture: Box<dyn TextureTrait>, id: &'static str) -> Turtle {
+    pub fn new(path: String, texture: Box<dyn TextureTrait>, id: String) -> Turtle {
         let g = parse_grammar(path).unwrap();
         let s = g.expand();
 
@@ -194,8 +192,8 @@ impl GetTexture for Turtle {
 }
 
 impl ObjectId for Turtle {
-    fn id(&self) -> &'static str {
-        self.id
+    fn id(&self) -> &String {
+        &self.id
     }
 }
 

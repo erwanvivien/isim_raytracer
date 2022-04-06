@@ -53,7 +53,7 @@ impl MengerRec {
 pub struct Menger {
     pub menger: MengerRec,
     pub texture: Box<dyn TextureTrait>,
-    pub id: &'static str,
+    pub id: String,
 }
 
 impl Menger {
@@ -62,7 +62,7 @@ impl Menger {
         p1: Point,
         p2: Point,
         texture: Box<dyn TextureTrait>,
-        id: &'static str,
+        id: String,
     ) -> Menger {
         let mut xs = [p1.x, p2.x];
         let mut ys = [p1.y, p2.y];
@@ -152,8 +152,8 @@ impl GetTexture for Menger {
 }
 
 impl ObjectId for Menger {
-    fn id(&self) -> &'static str {
-        self.id
+    fn id(&self) -> &String {
+        &self.id
     }
 }
 

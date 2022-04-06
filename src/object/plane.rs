@@ -8,7 +8,7 @@ pub struct Plane {
     pub normal: Vector,
 
     pub texture: Box<dyn TextureTrait>,
-    pub id: &'static str,
+    pub id: String,
 }
 
 impl Intersect for Plane {
@@ -47,8 +47,8 @@ impl GetTexture for Plane {
 }
 
 impl ObjectId for Plane {
-    fn id(&self) -> &'static str {
-        self.id
+    fn id(&self) -> &String {
+        &self.id
     }
 }
 
