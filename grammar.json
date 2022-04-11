@@ -1,11 +1,11 @@
 {
   "angle": 22.5,
-  "steps": 0,
-  "axiom": "{-f+f+f-|-f+f+f}",
+  "steps": 7,
+  "axiom": "A",
   "rules": {
     "A": "[&FL!A]/////'[&FL!A]///////'[&FL!A]",
     "F": "S ///// F",
-    "S": "F L",
+    "S": "FL",
     "L": "['''^^{-f+f+f-|-f+f+f}]"
   }
 }
