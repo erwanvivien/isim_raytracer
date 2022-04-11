@@ -95,7 +95,13 @@ impl Intersect for RectangleInner {
             tmax = tzmax;
         }
 
-        vec![p + v * tmin, p + v * tmax]
+        if tmin > 0f64 && tmax > 0f64 {
+            vec![p + v * tmin, p + v * tmax]
+        } else if tmax > 0f64 {
+            vec![p + v * tmax]
+        } else {
+            vec![]
+        }
     }
 }
 
