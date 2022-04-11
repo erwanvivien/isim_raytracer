@@ -90,8 +90,8 @@ impl Intersect for MengerRec {
 
     fn intersect_points(&self, p: Point, v: Vector) -> Vec<Point> {
         let inter = self.rect.intersect_points(p, v);
-        if inter.is_empty() {
-            return Vec::new();
+        if inter.is_empty() || self.sub_menger.is_empty() {
+            return inter;
         }
 
         let mut best_dist = f64::MAX;
@@ -111,11 +111,7 @@ impl Intersect for MengerRec {
             }
         }
 
-        if best_dist != f64::MAX {
-            best_inter
-        } else {
-            inter
-        }
+        best_inter
     }
 }
 
