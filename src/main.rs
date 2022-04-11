@@ -21,11 +21,11 @@ mod vector;
 
 const OFFSET: f64 = 0f64;
 
-const CAMERA_CENTER: Point = Point::new(0f64 + 7f64, 20f64, 0f64 + OFFSET);
-const SPOTTED_POINT: Point = Point::new(0f64 + 7f64, 0f64, 0f64 + OFFSET);
-const UP: Vector = Vector::new(1f64, 0f64, 0f64);
+const CAMERA_CENTER: Point = Point::new(-5f64, 2f64, 2f64 + OFFSET);
+const SPOTTED_POINT: Point = Point::new(0f64, 2f64, 2f64 + OFFSET);
+const UP: Vector = Vector::new(0f64, 1f64, 0f64);
 
-const LIGHT_CENTER: Point = Point::new(0f64, 10f64, 0f64 + OFFSET);
+const LIGHT_CENTER: Point = Point::new(-3f64, 2f64, 0f64 + OFFSET);
 
 fn main() {
     let menger = Menger::new(
@@ -37,7 +37,7 @@ fn main() {
             ka: 0f64,
             ks: 0.1f64,
 
-            color: Color::WHITE,
+            color: Color::RED,
         }),
         String::from("rect"),
     );
@@ -54,19 +54,19 @@ fn main() {
         std::f64::consts::FRAC_PI_2,
     );
 
-    let turtle = Turtle::new(
-        String::from("./grammar.json"),
-        Box::new(UniformTexture {
-            kd: 1f64,
-            ka: 0f64,
-            ks: 0.1f64,
+    // let turtle = Turtle::new(
+    //     String::from("./grammar.json"),
+    //     Box::new(UniformTexture {
+    //         kd: 1f64,
+    //         ka: 0f64,
+    //         ks: 0.1f64,
+    //
+    //         color: Color::WHITE,
+    //     }),
+    //     String::from("turtle"),
+    // );
 
-            color: Color::WHITE,
-        }),
-        String::from("turtle"),
-    );
-
-    let objs: Vec<Box<dyn ObjectTrait>> = vec![Box::new(turtle)];
+    let objs: Vec<Box<dyn ObjectTrait>> = vec![Box::new(menger)];
 
     let scene = Scene {
         cam,
