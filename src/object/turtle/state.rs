@@ -7,6 +7,7 @@ pub struct State {
     pub up: Vector,
     pub left: Vector,
     pub color_index: usize,
+    pub radius: f64,
 }
 
 impl State {

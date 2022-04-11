@@ -24,11 +24,7 @@ pub struct Turtle {
 }
 
 impl Turtle {
-    fn generate(
-        s: String,
-        angle: f64,
-        color: Color,
-    ) -> (Vec<Box<dyn ObjectTrait>>, Vector, Vector) {
+    fn generate(s: String, angle: f64, ka: f64) -> (Vec<Box<dyn ObjectTrait>>, Vector, Vector) {
         let mut res = Vec::<Box<dyn ObjectTrait>>::new();
         let mut states = Vec::new();
         let mut polygon_edges = Vec::new();
@@ -39,11 +35,11 @@ impl Turtle {
             up: Vector::new(0f64, 1f64, 0f64),
             left: Vector::new(0f64, 0f64, 1f64),
             color_index: 0,
+            radius: 0.2f64,
         };
 
         let mut min = Vector::ZERO;
         let mut max = Vector::ZERO;
-        const RADIUS: f64 = 0.2f64;
 
         for c in s.chars() {
             match c {
@@ -53,18 +49,18 @@ impl Turtle {
                     res.push(Box::new(Sphere {
                         p: current.position,
                         id: format!("Turtle {}", res.len()),
-                        r: RADIUS,
+                        r: current.radius,
                         texture: Box::new(UniformTexture {
                             kd: 1f64,
-                            ka: 0f64,
+                            ka,
                             ks: 0.1f64,
 
-                            color,
+                            color: Color::new(103, 78, 31),
                         }),
                     }));
 
-                    min = min.min_against(&(current.position - RADIUS));
-                    max = max.max_against(&(current.position + RADIUS));
+                    min = min.min_against(&(current.position - current.radius));
+                    max = max.max_against(&(current.position + current.radius));
                 }
                 // Turn left
                 '+' => current.rotate_up(angle),
@@ -79,7 +75,7 @@ impl Turtle {
                 // Rotate anti-clockwise
                 '\\' => current.rotate_head(-angle),
                 // U-Turn
-                '|' => current.rotate_head(180f64),
+                '|' => current.rotate_up(180f64),
                 // Place polygon egde
                 'f' => {
                     min = min.min_against(&current.position);
@@ -89,17 +85,16 @@ impl Turtle {
                     current.move_forward(0.4f64);
                 }
                 // Decrement diameter
-                '!' => {}
+                '!' => current.radius /= 1.3f64,
                 // Increment index color table
                 '\'' => {}
                 // Starts a polygon
                 '{' => polygon_edges.clear(),
                 // Closes a polygon
                 '}' => {
-                    polygon_edges.push(current.position.clone());
-
                     let start = polygon_edges[0];
-                    for win in polygon_edges.windows(2).skip(1) {
+
+                    for (idx, win) in polygon_edges.windows(2).skip(1).enumerate() {
                         let (first, second) = (win[0], win[1]);
                         let triangle = Triangle::new(
                             start,
@@ -108,10 +103,10 @@ impl Turtle {
                             Box::new(UniformTexture {
                                 kd: 1f64,
                                 ks: 0.2f64,
-                                ka: 0f64,
+                                ka: 0.2f64,
                                 color: Color::GREEN,
                             }),
-                            format!("Triangle {}", polygon_edges.len()),
+                            format!("Triangle {}", idx),
                         );
 
                         res.push(Box::new(triangle));
@@ -125,6 +120,7 @@ impl Turtle {
             };
         }
 
+        dbg!(res.len());
         (res, min, max)
     }
 
@@ -132,7 +128,8 @@ impl Turtle {
         let g = parse_grammar(path).unwrap();
         let s = g.expand();
 
-        let (objects, min, max) = Turtle::generate(s, g.angle, Color::GREEN);
+        dbg!(&texture.coefficients(Point::ZERO).2);
+        let (objects, min, max) = Turtle::generate(s, g.angle, texture.coefficients(Point::ZERO).2);
 
         Turtle {
             objects,
@@ -177,7 +174,9 @@ impl Intersect for Turtle {
 
 impl Normal for Turtle {
     fn normal(&self, p: Point) -> Vector {
-        if let Some(index) = self.latest_hit.take() {
+        let old = self.latest_hit.take();
+        if let Some(index) = old {
+            self.latest_hit.replace(old);
             self.objects[index].normal(p)
         } else {
             Vector::ZERO
@@ -187,13 +186,25 @@ impl Normal for Turtle {
 
 impl GetTexture for Turtle {
     fn texture(&self) -> &Box<dyn TextureTrait> {
-        &self.texture
+        let old = self.latest_hit.take();
+        if let Some(index) = old {
+            self.latest_hit.replace(old);
+            self.objects[index].texture()
+        } else {
+            &self.texture
+        }
     }
 }
 
 impl ObjectId for Turtle {
     fn id(&self) -> &String {
-        &self.id
+        let old = self.latest_hit.take();
+        if let Some(index) = old {
+            self.latest_hit.replace(old);
+            self.objects[index].id()
+        } else {
+            &self.id
+        }
     }
 }
 
