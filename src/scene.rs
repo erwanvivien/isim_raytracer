@@ -70,9 +70,13 @@ impl Scene {
         v: Vector,
         rec: usize,
     ) -> Option<Color> {
-        let normal = obj.normal(p);
+        let mut normal = obj.normal(p);
+        if normal * self.cam.forward > 0f64 {
+            normal = -normal;
+        }
+
         let reflect = v - normal * (v * normal) * 2f64;
-        let (kd, ks, _ka) = obj.texture().coefficients(p);
+        let (kd, ks, ka) = obj.texture().coefficients(p);
 
         let mut current_color = Color::BLACK;
 
@@ -88,7 +92,7 @@ impl Scene {
 
             let rl = reflect * l_vec.normalize();
             let i_s = intensity * (ks * rl.powf(50f64)).copysign(rl);
-            let out = i_d + i_s;
+            let out = i_d + i_s + obj.texture().color(p).v * ka;
 
             let intersect = self.cast_ray(p, l_vec);
             if let Some((_i_p, _i_obj, i_dist)) = intersect {
