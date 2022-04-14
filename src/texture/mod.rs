@@ -2,6 +2,7 @@
 use crate::point::Point;
 use crate::Color;
 
+pub mod random;
 pub mod uniform;
 
 pub trait LightCoefficients {
