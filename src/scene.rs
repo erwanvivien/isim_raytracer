@@ -29,8 +29,8 @@ impl Scene {
 
         let size = height;
         for (_ii, i) in (0..height).map(|i| qy * i as f64).enumerate() {
-            print!("{:.2}%\r", (_ii * 100) as f64 / (size as f64));
-            std::io::stdout().flush().unwrap();
+            // print!("{:.2}%\r", (_ii * 100) as f64 / (size as f64));
+            // std::io::stdout().flush().unwrap();
 
             for (_jj, j) in (0..width).map(|j| qx * j as f64).enumerate() {
                 let p_pixel = p_top_left + j - i;
@@ -39,7 +39,7 @@ impl Scene {
 
                 let collision = self.cast_ray(self.cam.center, v);
                 if collision.is_none() {
-                    img.push(Color::BLACK);
+                    img.push(Color::WHITE);
                     continue;
                 }
 
@@ -52,7 +52,7 @@ impl Scene {
                 }
             }
         }
-        println!();
+        // println!();
 
         img
     }
