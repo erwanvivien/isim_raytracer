@@ -8,4 +8,4 @@ Implemented:
 - [x] Sphere
 - [x] Plane
 - [x] Triangle
-- [ ] Fractale
+- [x] Fractale
